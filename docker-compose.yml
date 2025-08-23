@@ -1,0 +1,18 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: cc-mw-if
+    environment:
+      - VITE_API_URL=https://cc.multiweb.id
+      - VITE_API_CURRENCY_URL=https://api-currency.baliweddingvilla.com
+      - VITE_API_CURRENCY_API_KEY=5c3c28eb9ffed1087400d2f4274731a2
+      - VITE_GOOGLE_MAP_KEY=AIzaSyD8z5-LNZRvlzFDBPLM-sh763_SCxtrhH0
+
+  nginx:
+    image: cc-mw-if
+    ports:
+      - "28082:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro

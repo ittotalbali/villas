@@ -1,0 +1,93 @@
+/* Map container height fixes */
+.leaflet-container {
+  height: 100% !important;
+}
+
+/* Smooth transitions for markers */
+.marker-icon rect {
+  transition: fill 0.3s ease-out, stroke 0.3s ease-out;
+}
+.marker-icon text {
+  transition: fill 0.3s ease-out;
+}
+.marker-icon.active {
+  transform: scale(1.02);
+  transform-origin: center;
+  transition: transform 0.3s ease-out;
+}
+/* Sticky map positioning */
+.sticky {
+  position: sticky !important;
+}
+
+/* Enhanced responsive desktop layout */
+@media (min-width: 1024px) {
+  /* Ensure the layout adapts smoothly to different screen sizes */
+  .desktop-layout {
+    transition: all 0.3s ease-out;
+  }
+
+  /* Fixed 3-column grid for all desktop sizes - just like Airbnb */
+  .villa-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+
+  /* Adjust gaps based on available space */
+  @media (min-width: 1024px) and (max-width: 1280px) {
+    .villa-grid {
+      gap: 1rem !important;
+    }
+  }
+
+  @media (min-width: 1281px) and (max-width: 1600px) {
+    .villa-grid {
+      gap: 1.25rem !important;
+    }
+  }
+
+  @media (min-width: 1601px) {
+    .villa-grid {
+      gap: 1.5rem !important;
+    }
+  }
+}
+
+/* Ensure proper scrolling in mobile drawer */
+.vaul-drawer-content {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/* Fix for mobile viewport height */
+@media (max-width: 1024px) {
+  .h-full {
+    height: calc(
+      100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom)
+    ) !important;
+  }
+}
+
+/* Ensure body allows scrolling */
+body {
+  overflow-x: hidden;
+}
+
+/* Map expansion animation */
+.map-container {
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Villa card hover effects */
+.villa-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive container max-width */
+@media (min-width: 1024px) {
+  .main-container {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+}

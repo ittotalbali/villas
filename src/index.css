@@ -1,0 +1,14 @@
+@import "tailwindcss";
+
+/* Global styles for Leaflet markers */
+.leaflet-marker-icon .marker-transition {
+  transition: all 0.3s ease-out !important;
+}
+
+.leaflet-marker-icon .marker-rect {
+  transition: all 0.3s ease-out !important;
+}
+
+.leaflet-marker-icon .marker-text {
+  transition: all 0.3s ease-out !important;
+}
