@@ -4,6 +4,7 @@ import Pagination from "./pagination";
 import ListCard from "@/components/ListCard";
 import ListCardSkeleton from "@/components/ListCard/skeleton";
 import { useHomeContext } from "../../contexts/context";
+import { generateVillaSlug } from "@/lib/utils";
 
 type Props = {
   testid?: string;
@@ -60,14 +61,21 @@ const VillaListSection = ({}: Props) => {
             )}
 
             {villas.map((villa, index) => (
-              <ListCard
+              <a
                 key={`${villa.id}-${index}`}
-                villa={villa}
-                isSelected={selectedVilla === villa.id}
-                onClick={() => handleMarkerClick(villa.id)}
-                onMouseEnter={() => handleHover(villa.id, true)}
-                onMouseLeave={() => handleHover(villa.id, false)}
-              />
+                href={generateVillaSlug(villa)}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <ListCard
+                  key={`${villa.id}-${index}`}
+                  villa={villa}
+                  isSelected={selectedVilla === villa.id}
+                  onClick={() => handleMarkerClick(villa.id)}
+                  onMouseEnter={() => handleHover(villa.id, true)}
+                  onMouseLeave={() => handleHover(villa.id, false)}
+                />
+              </a>
             ))}
           </div>
 

@@ -1,6 +1,6 @@
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import {
-  Filter,
+  Search,
   Home,
   Bath,
   DollarSign,
@@ -12,6 +12,7 @@ import {
   Building,
   Loader2,
   CalendarIcon,
+  SlidersHorizontal,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -48,7 +49,6 @@ import { useHomeContext } from "@/components/Pages/Home/contexts/context";
 import AreaComboBox from "@/components/ComboBoxes/Area";
 import LocationComboBox from "@/components/ComboBoxes/Location";
 import SubLocationComboBox from "@/components/ComboBoxes/SubLocation";
-import CurrencyComboBox from "@/components/ComboBoxes/Currency";
 
 // Import facilities hook
 import { useFacilities } from "@/lib/api/hooks/facilities";
@@ -58,7 +58,7 @@ import {
 } from "@/lib/store/filterStore";
 
 export default function VillaFilterModal() {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("retreats");
   const [checkInDate, setCheckInDate] = useState<Date>();
   const [checkOutDate, setCheckOutDate] = useState<Date>();
@@ -82,6 +82,9 @@ export default function VillaFilterModal() {
   // Local draft state for form values
   const [draftFilters, setDraftFilters] = useState<VillaQueryParams>({});
 
+  // Ref to track scroll position
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
   // Initialize draft filters when modal opens
   useEffect(() => {
     if (open) {
@@ -96,19 +99,36 @@ export default function VillaFilterModal() {
     }
   }, [open, filters]);
 
-  // Memoized update draft filter helper
+  // Memoized update draft filter helper with scroll preservation
   const updateDraftFilter = useCallback(
     (key: keyof VillaQueryParams, value: any) => {
-      setDraftFilters((prev) => ({
-        ...prev,
-        [key]: value === undefined || value === "" ? undefined : value,
-      }));
+      // Capture current scroll position
+      const scrollPosition = scrollContainerRef.current?.scrollTop || 0;
+
+      setDraftFilters((prev) => {
+        const newFilters = {
+          ...prev,
+          [key]: value === undefined || value === "" ? undefined : value,
+        };
+
+        // Restore scroll position after state update
+        requestAnimationFrame(() => {
+          if (scrollContainerRef.current) {
+            scrollContainerRef.current.scrollTop = scrollPosition;
+          }
+        });
+
+        return newFilters;
+      });
     },
     []
   );
 
-  // Memoized toggle facility in draft
+  // Memoized toggle facility in draft with scroll preservation
   const toggleDraftFacility = useCallback((facilityId: number) => {
+    // Capture current scroll position
+    const scrollPosition = scrollContainerRef.current?.scrollTop || 0;
+
     setDraftFilters((prev) => {
       const currentFacilities = prev.facilities || [];
       const facilityIdStr = facilityId.toString();
@@ -117,6 +137,13 @@ export default function VillaFilterModal() {
       const newFacilities = isSelected
         ? currentFacilities.filter((id) => id !== facilityIdStr)
         : [...currentFacilities, facilityIdStr];
+
+      // Restore scroll position after state update
+      requestAnimationFrame(() => {
+        if (scrollContainerRef.current) {
+          scrollContainerRef.current.scrollTop = scrollPosition;
+        }
+      });
 
       return {
         ...prev,
@@ -131,6 +158,9 @@ export default function VillaFilterModal() {
       setCheckInDate(date);
       const dateString = date ? format(date, "yyyy-MM-dd") : undefined;
 
+      // Capture current scroll position
+      const scrollPosition = scrollContainerRef.current?.scrollTop || 0;
+
       setDraftFilters((prev) => {
         const newFilters = { ...prev, start_date: dateString };
 
@@ -139,6 +169,13 @@ export default function VillaFilterModal() {
           setCheckOutDate(undefined);
           newFilters.end_date = undefined;
         }
+
+        // Restore scroll position after state update
+        requestAnimationFrame(() => {
+          if (scrollContainerRef.current) {
+            scrollContainerRef.current.scrollTop = scrollPosition;
+          }
+        });
 
         return newFilters;
       });
@@ -156,21 +193,25 @@ export default function VillaFilterModal() {
     [updateDraftFilter]
   );
 
-  // Memoized update villa type nested filters for draft
+  // Memoized update villa type nested filters for draft with scroll preservation
   const updateDraftVillaTypeFilter = useCallback(
     (villaType: keyof VillaQueryParams, key: string, value: any) => {
+      // Capture current scroll position
+      const scrollPosition = scrollContainerRef.current?.scrollTop || 0;
+
       setDraftFilters((prev) => {
         const currentParams =
           (prev[villaType] as any)?.params ||
           (villaType === "wedding_villa" ? {} : []);
 
+        let newFilters;
         if (
           villaType === "wedding_villa" &&
           typeof currentParams === "object" &&
           !Array.isArray(currentParams)
         ) {
           // Wedding villa has mixed params structure
-          return {
+          newFilters = {
             ...prev,
             [villaType]: {
               params: {
@@ -185,13 +226,22 @@ export default function VillaFilterModal() {
             ? [...currentParams.filter((p) => p !== key), key]
             : currentParams.filter((p) => p !== key);
 
-          return {
+          newFilters = {
             ...prev,
             [villaType]: { params: newParams },
           };
+        } else {
+          newFilters = prev;
         }
 
-        return prev;
+        // Restore scroll position after state update
+        requestAnimationFrame(() => {
+          if (scrollContainerRef.current) {
+            scrollContainerRef.current.scrollTop = scrollPosition;
+          }
+        });
+
+        return newFilters;
       });
     },
     []
@@ -199,10 +249,13 @@ export default function VillaFilterModal() {
 
   // Apply filters - update Zustand store only when clicked
   const applyFilters = useCallback(() => {
-    console.log("Applying Filters:", draftFilters);
-    setFilters(draftFilters); // Update the actual Zustand store
+    setFilters(draftFilters); // Update the Zustand store
+    if (draftFilters.lat && draftFilters.lng) {
+      setCenter([parseFloat(draftFilters.lat), parseFloat(draftFilters.lng)]);
+      setZoom(12);
+    }
     setOpen(false);
-  }, [draftFilters, setFilters]);
+  }, [draftFilters, setFilters, setCenter]);
 
   // Cancel and don't update Zustand store
   const handleCancel = useCallback(() => {
@@ -211,12 +264,22 @@ export default function VillaFilterModal() {
 
   // Clear all draft filters and Zustand store filters
   const clearAllDraftFilters = useCallback(() => {
+    // Capture current scroll position
+    const scrollPosition = scrollContainerRef.current?.scrollTop || 0;
+
     setDraftFilters({});
     setCheckInDate(undefined);
     setCheckOutDate(undefined);
     clearAllFilters(); // Clear Zustand store filters
     setCenter([-8.663804, 115.141362]); // Reset map to default center
     setZoom(16); // Reset map to default zoom
+
+    // Restore scroll position after state update
+    requestAnimationFrame(() => {
+      if (scrollContainerRef.current) {
+        scrollContainerRef.current.scrollTop = scrollPosition;
+      }
+    });
   }, [clearAllFilters, setCenter, setZoom]);
 
   // Memoized calculate active filter count for draft
@@ -224,7 +287,6 @@ export default function VillaFilterModal() {
     const filters = draftFilters;
     let count = 0;
 
-    if (filters.curs_exchanges_id) count++;
     if (filters.area_id) count++;
     if (filters.location_id) count++;
     if (filters.sub_location_id) count++;
@@ -520,22 +582,19 @@ export default function VillaFilterModal() {
   // Filter Content Component
   const FilterContent = () => (
     <div className="space-y-6">
-      {/* Location & Currency Row */}
+      {/* Search */}
+      <div className="space-y-2">
+        <Label className="text-sm font-medium">Search</Label>
+        <Input
+          placeholder="Search villas..."
+          value={draftFilters.search_param || ""}
+          onChange={(e) =>
+            updateDraftFilter("search_param", e.target.value || undefined)
+          }
+        />
+      </div>
+      {/* Location Row */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {/* Currency */}
-        <div className="space-y-2">
-          <Label className="text-sm font-medium">Currency</Label>
-          <div className="relative z-[60]">
-            <CurrencyComboBox
-              value={draftFilters.curs_exchanges_id}
-              onValueChange={(value) =>
-                updateDraftFilter("curs_exchanges_id", value)
-              }
-              placeholder="Select currency"
-            />
-          </div>
-        </div>
-
         {/* Area */}
         <div className="space-y-2">
           <Label className="text-sm font-medium">Area</Label>
@@ -659,18 +718,6 @@ export default function VillaFilterModal() {
               ))}
             </SelectContent>
           </Select>
-        </div>
-
-        {/* Search */}
-        <div className="space-y-2">
-          <Label className="text-sm font-medium">Search</Label>
-          <Input
-            placeholder="Search villas..."
-            value={draftFilters.search_param || ""}
-            onChange={(e) =>
-              updateDraftFilter("search_param", e.target.value || undefined)
-            }
-          />
         </div>
       </div>
 
@@ -952,19 +999,20 @@ export default function VillaFilterModal() {
     </div>
   );
 
-  // Trigger Button Component
-
   // Dialog for all screen sizes
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="relative">
-          <Filter className="mr-2 h-4 w-4" />
+        <Button
+          variant="outline"
+          className="relative rounded-full flex items-center justify-center p-0"
+        >
+          <SlidersHorizontal className="h-5 w-5" />
           Filters
           {getActiveFilterCount() > 0 && (
             <Badge
               variant="destructive"
-              className="ml-2 h-5 w-5 p-0 flex items-center justify-center text-xs"
+              className="absolute -top-1 -right-1 h-5 w-5 p-0 flex items-center justify-center text-xs"
             >
               {getActiveFilterCount()}
             </Badge>
@@ -972,8 +1020,9 @@ export default function VillaFilterModal() {
         </Button>
       </DialogTrigger>
       <DialogContent
-        className="w-[95vw] max-w-5xl h-[95vh] max-h-[95vh] flex flex-col p-0 bg-white"
+        className="w-[95vw] max-w-5xl h-[95vh] max-h-[95vh] z-[1000] flex flex-col p-0 bg-white"
         style={{ zIndex: 50 }}
+        onOpenAutoFocus={(e) => e.preventDefault()}
       >
         <DialogHeader className="px-4 pt-4 pb-2 sm:px-6 sm:pt-6 sm:pb-4">
           <DialogTitle className="flex items-center text-lg sm:text-xl">
@@ -981,7 +1030,10 @@ export default function VillaFilterModal() {
             Filter Villas
           </DialogTitle>
         </DialogHeader>
-        <div className="relative flex-1 overflow-y-auto px-4 pb-4 sm:px-6 sm:pb-6">
+        <div
+          ref={scrollContainerRef}
+          className="relative flex-1 overflow-y-auto px-4 pb-4 sm:px-6 sm:pb-6"
+        >
           <FilterContent />
         </div>
         <ActionButtons />

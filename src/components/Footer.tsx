@@ -18,8 +18,8 @@ const Footer = () => {
             Menjadi Tuan Rumah
           </h3>
           <ul className="mt-2 space-y-1 text-sm text-gray-600">
-            <li>Jadikan tempat Anda Airbnb</li>
-            <li>Jadikan pengalaman Anda Airbnb</li>
+            <li>Jadikan tempat Anda </li>
+            <li>Jadikan pengalaman Anda </li>
             <li>AirCover untuk Tuan Rumah</li>
             <li>Sumber informasi menerima tamu</li>
             <li>Forum komunitas</li>
@@ -29,7 +29,7 @@ const Footer = () => {
           </ul>
         </div>
         <div>
-          <h3 className="text-sm font-semibold text-gray-900">Airbnb</h3>
+          <h3 className="text-sm font-semibold text-gray-900">Total Villa</h3>
           <ul className="mt-2 space-y-1 text-sm text-gray-600">
             <li>Update Mei 2025</li>
             <li>Ruang Berita</li>

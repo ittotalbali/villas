@@ -1,3 +1,4 @@
+import { cn } from "@/lib/utils";
 import { useHomeContext } from "../../contexts/context";
 
 type Props = {
@@ -11,7 +12,9 @@ const ViewModeButton = ({}: Props) => {
   };
   return (
     <button
-      className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[1000] bg-pink-500 text-white border-none rounded-full px-6 py-3 font-semibold shadow-lg cursor-pointer"
+      className={cn(
+        "fixed bottom-6 left-1/2 -translate-x-1/2  bg-pink-500 text-white border-none rounded-full px-6 py-3 font-semibold shadow-lg cursor-pointer"
+      )}
       onClick={toggleViewMode}
     >
       {viewMode === "list" ? "Show Map" : "Show Villas"}

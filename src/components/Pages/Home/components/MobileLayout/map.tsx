@@ -15,7 +15,7 @@ const MapSection = ({}: Props) => {
   const villas = flattenInfiniteVillas(data);
 
   return (
-    <div className="flex-1 relative">
+    <div className="flex-1 z-0 relative">
       <Map
         villas={villas}
         className="w-full h-full"

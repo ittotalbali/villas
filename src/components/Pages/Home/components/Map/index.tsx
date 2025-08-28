@@ -1,10 +1,10 @@
 import { useMap, MapContainer, TileLayer, Marker } from "react-leaflet";
 import { MapEvents } from "./utils";
 import type { CSSProperties } from "react";
-import { cn, formatPrice } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import type { Villa } from "@/lib/api/hooks/villas";
 import { useHomeContext } from "../../contexts/context";
-import { getMarkerIcon } from "./MarkerIcon";
+import { getMarkerIcon2 } from "./MarkerIcon";
 import { useEffect } from "react";
 import { useVillaFilterStore } from "@/lib/store/filterStore";
 
@@ -31,7 +31,7 @@ const MapContent = ({ villas }: { villas: Villa[] }) => {
 
   // Update map view when center or zoom changes
   useEffect(() => {
-    if (center && zoom) {
+    if (center && zoom && !isNaN(center[0]) && !isNaN(center[1])) {
       const currentCenter = map.getCenter();
       const currentZoom = map.getZoom();
 
@@ -73,19 +73,19 @@ const MapContent = ({ villas }: { villas: Villa[] }) => {
         if (!villa.latitude || !villa.longitude) return null;
         const lat = parseFloat(villa.latitude);
         const lng = parseFloat(villa.longitude);
-        const priceLabel =
-          villa.base_rate && villa.base_rate_currency
-            ? `${villa.base_rate_currency} ${formatPrice(
-                Number(villa.base_rate),
-                villa.base_rate_currency
-              )}`
-            : "-";
+        // const priceLabel =
+        //   villa.base_rate && villa.base_rate_currency
+        //     ? `${villa.base_rate_currency} ${formatPrice(
+        //         Number(villa.base_rate),
+        //         villa.base_rate_currency
+        //       )}`
+        //     : "-";
         const isActive = hoveredVilla === villa.id;
         return (
           <Marker
             key={villa.id}
             position={[lat, lng]}
-            icon={getMarkerIcon(priceLabel, isActive)}
+            icon={getMarkerIcon2(villa.total_bedroom!, isActive)}
             ref={(ref) => {
               if (ref) markerRefs.current[villa.id] = ref;
             }}

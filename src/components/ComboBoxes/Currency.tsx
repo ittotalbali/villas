@@ -107,7 +107,7 @@ export default function CurrencyComboBox({
   };
 
   return (
-    <div ref={containerRef} className={`relative w-full ${className}`}>
+    <div ref={containerRef} className={`relative min-w-32 ${className}`}>
       {/* Trigger Button */}
       <button
         type="button"
@@ -125,10 +125,10 @@ export default function CurrencyComboBox({
           ${selectedCurrency ? "text-gray-900" : "text-gray-500"}
         `}
       >
-        <span className="block truncate">
+        <span className="block truncate flex-1">
           {selectedCurrency ? selectedCurrency.code : placeholder}
         </span>
-        <div className="flex items-center space-x-1">
+        <div className="flex items-center space-x-1 flex-none">
           {selectedCurrency && !disabled && (
             <button
               onClick={handleClear}
@@ -149,7 +149,6 @@ export default function CurrencyComboBox({
       {/* Dropdown */}
       {isOpen && (
         <div className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg">
-          {/* Search Input (optional, omitted since not in original CurrencyComboBox) */}
           <div
             ref={listRef}
             className="max-h-60 overflow-y-auto"
@@ -197,9 +196,11 @@ export default function CurrencyComboBox({
                       `}
                       onMouseEnter={() => setHighlightedIndex(index)}
                     >
-                      <span className="block truncate">{currency.code}</span>
+                      <span className="block truncate flex-1">
+                        {currency.code}
+                      </span>
                       {isSelected && (
-                        <Check className="h-4 w-4 text-blue-600" />
+                        <Check className="h-4 w-4 text-blue-600 flex-none" />
                       )}
                     </div>
                   );

@@ -1,5 +1,5 @@
 import { useInfiniteVillas } from "@/lib/api/hooks/villas/useInfiniteVillas";
-
+import { formatPrice } from "@/lib/utils";
 import { flattenInfiniteVillas } from "@/lib/utils/villas";
 import { debounce, type DebouncedFunc } from "lodash";
 import {
@@ -10,7 +10,7 @@ import {
   useMemo,
   useRef,
 } from "react";
-import { getMarkerIcon2 } from "../components/Map/MarkerIcon";
+import { getMarkerIcon } from "../components/Map/MarkerIcon";
 import type { InfiniteVillaResponse, Villa } from "@/lib/api/hooks/villas";
 import type {
   FetchNextPageOptions,
@@ -85,14 +85,14 @@ export const HomeMobilesContextProvider = ({
         Object.entries(markerRefs.current).forEach(([villaId, marker]) => {
           const villa = villas.find((v) => v.id === Number(villaId));
           if (villa) {
-            // const priceLabel =
-            //   villa.base_rate && villa.base_rate_currency
-            //     ? `${villa.base_rate_currency} ${formatPrice(
-            //         Number(villa.base_rate),
-            //         villa.base_rate_currency
-            //       )}`
-            //     : "-";
-            marker.setIcon(getMarkerIcon2(villa.total_bedroom!, false));
+            const priceLabel =
+              villa.base_rate && villa.base_rate_currency
+                ? `${villa.base_rate_currency} ${formatPrice(
+                    Number(villa.base_rate),
+                    villa.base_rate_currency
+                  )}`
+                : "-";
+            marker.setIcon(getMarkerIcon(priceLabel, false));
             marker.setZIndexOffset(0);
           }
         });
@@ -103,14 +103,14 @@ export const HomeMobilesContextProvider = ({
       if (marker) {
         const villa = villas.find((v) => v.id === id);
         if (villa) {
-          // const priceLabel =
-          //   villa.base_rate && villa.base_rate_currency
-          //     ? `${villa.base_rate_currency} ${formatPrice(
-          //         Number(villa.base_rate),
-          //         villa.base_rate_currency
-          //       )}`
-          //     : "-";
-          marker.setIcon(getMarkerIcon2(villa.total_bedroom!, true));
+          const priceLabel =
+            villa.base_rate && villa.base_rate_currency
+              ? `${villa.base_rate_currency} ${formatPrice(
+                  Number(villa.base_rate),
+                  villa.base_rate_currency
+                )}`
+              : "-";
+          marker.setIcon(getMarkerIcon(priceLabel, true));
           marker.setZIndexOffset(1000);
         }
       }
@@ -119,14 +119,14 @@ export const HomeMobilesContextProvider = ({
         if (Number(villaId) !== id) {
           const villa = villas.find((v) => v.id === Number(villaId));
           if (villa) {
-            // const priceLabel =
-            //   villa.base_rate && villa.base_rate_currency
-            //     ? `${villa.base_rate_currency} ${formatPrice(
-            //         Number(villa.base_rate),
-            //         villa.base_rate_currency
-            //       )}`
-            //     : "-";
-            marker.setIcon(getMarkerIcon2(villa.total_bedroom!, false));
+            const priceLabel =
+              villa.base_rate && villa.base_rate_currency
+                ? `${villa.base_rate_currency} ${formatPrice(
+                    Number(villa.base_rate),
+                    villa.base_rate_currency
+                  )}`
+                : "-";
+            marker.setIcon(getMarkerIcon(priceLabel, false));
             marker.setZIndexOffset(0);
           }
         }

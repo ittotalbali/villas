@@ -3,7 +3,7 @@
   height: 100% !important;
 }
 
-/* Smooth transitions for markers */
+/* Smooth transitions for price markers */
 .marker-icon rect {
   transition: fill 0.3s ease-out, stroke 0.3s ease-out;
 }
@@ -15,6 +15,28 @@
   transform-origin: center;
   transition: transform 0.3s ease-out;
 }
+
+/* Jumping animation for bedroom markers */
+@keyframes jump {
+  0%,
+  100% {
+    transform: translateY(0) scale(1.1);
+  }
+  50% {
+    transform: translateY(-5px) scale(1.1);
+  }
+}
+
+/* Smooth transitions and jumping animation for bedroom markers */
+.marker-icon-bedroom {
+  transition: transform 0.3s ease-out;
+}
+.marker-icon-bedroom.active {
+  transform: scale(1.1);
+  transform-origin: center;
+  animation: jump 0.6s ease-in-out infinite;
+}
+
 /* Sticky map positioning */
 .sticky {
   position: sticky !important;

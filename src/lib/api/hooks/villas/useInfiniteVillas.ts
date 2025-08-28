@@ -6,19 +6,34 @@ import type {
 } from ".";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import axios from "axios";
+import { useVillaFilterStore } from "@/lib/store/filterStore";
 
 export const useInfiniteVillas = (
   baseParams: Omit<VillaQueryParams, "page">,
   isEnabled: boolean = false
 ) => {
+  const { filters } = useVillaFilterStore();
+
+  const queryParams: VillaQueryParams = {
+    ...filters,
+    ...baseParams,
+    // status: "post", // Always filter for published villas
+    is_paginate: true,
+  };
+
+  // Clean up undefined values
+  const cleanedParams = Object.fromEntries(
+    Object.entries(queryParams).filter(([_, value]) => value !== undefined)
+  );
+
   return useInfiniteQuery<VillaApiResponse, Error, InfiniteVillaResponse>({
-    queryKey: ["infinite-villas", baseParams],
+    queryKey: ["infinite-villas", cleanedParams],
     queryFn: async ({ pageParam = 1 }) => {
       const response: AxiosResponse<VillaApiResponse> = await axios.get(
         `${import.meta.env.VITE_API_URL}/api/v1/villa`,
         {
           params: {
-            ...baseParams,
+            ...cleanedParams,
             page: pageParam,
             is_paginate: true,
           },

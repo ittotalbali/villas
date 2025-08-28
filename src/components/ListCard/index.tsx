@@ -68,7 +68,7 @@ const ListCard = ({
       <div
         className={cn(
           "group flex flex-col bg-white cursor-pointer transition-all duration-200",
-          isSelected && "ring-2 ring-black ring-offset-2",
+          // isSelected && "ring-2 ring-black ring-offset-2",
           "hover:scale-[1.02] hover:shadow-lg"
         )}
         onClick={onClick}
