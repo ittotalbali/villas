@@ -4,7 +4,6 @@ import {
   useInfiniteLocations,
   type LocationQueryParams,
 } from "@/lib/api/hooks/locations";
-import { useHomeContext } from "../Pages/Home/contexts/context";
 
 interface LocationComboBoxProps {
   value?: number;
@@ -65,8 +64,6 @@ export default function LocationComboBox({
     isError,
     error,
   } = useInfiniteLocations(queryParams);
-
-  const { setCenter } = useHomeContext();
 
   const allLocations = data?.pages.flatMap((page) => page.data) || [];
   const selectedLocation = allLocations.find(

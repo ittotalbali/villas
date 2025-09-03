@@ -13,13 +13,7 @@ type props = {
   onMouseLeave: () => void;
 };
 
-const ListCard = ({
-  villa,
-  isSelected,
-  onClick,
-  onMouseEnter,
-  onMouseLeave,
-}: props) => {
+const ListCard = ({ villa, onClick, onMouseEnter, onMouseLeave }: props) => {
   if (!villa) {
     return (
       <div className="flex flex-col rounded-xl overflow-hidden bg-white">

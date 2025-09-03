@@ -1,6 +1,5 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import {
-  Search,
   Home,
   Bath,
   DollarSign,

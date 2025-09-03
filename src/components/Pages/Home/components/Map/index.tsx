@@ -66,6 +66,7 @@ const MapContent = ({ villas }: { villas: Villa[] }) => {
             ...filters,
             location_id: undefined,
             sub_location_id: undefined,
+            area_id: undefined,
           });
         }}
       />

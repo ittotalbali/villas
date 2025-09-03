@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Check, ChevronsUpDown, Loader2, X } from "lucide-react";
 import { useInfiniteAreas } from "@/lib/api/hooks/areas";
-import { useVillaFilterStore } from "@/lib/store/filterStore";
 
 interface AreaComboBoxProps {
   value?: number;
@@ -24,7 +23,7 @@ export default function CustomAreaComboBox({
   baseParams = {},
   searchDebounce = 300,
 }: AreaComboBoxProps) {
-  const { filters, setFilters } = useVillaFilterStore();
+  // const { filters, setFilters } = useVillaFilterStore();
   const [isOpen, setIsOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
@@ -36,7 +35,8 @@ export default function CustomAreaComboBox({
   const observerRef = useRef<IntersectionObserver | null>(null);
 
   // Use store value if propValue is undefined
-  const value = propValue !== undefined ? propValue : filters.area_id;
+  // const value = propValue !== undefined ? propValue : filters.area_id;
+  const value = propValue;
 
   // Debounce search
   useEffect(() => {
@@ -139,7 +139,7 @@ export default function CustomAreaComboBox({
   const handleSelect = (area: any) => {
     const newValue = value === area.id ? undefined : area.id;
     onValueChange?.(newValue);
-    setFilters({ ...filters, area_id: newValue });
+    // setFilters({ ...filters, area_id: newValue });
     setIsOpen(false);
     setSearchValue("");
     setHighlightedIndex(-1);
@@ -148,7 +148,7 @@ export default function CustomAreaComboBox({
   const handleClear = (e: React.MouseEvent) => {
     e.stopPropagation();
     onValueChange?.(undefined);
-    setFilters({ ...filters, area_id: undefined });
+    // setFilters({ ...filters, area_id: undefined });
   };
 
   const toggleOpen = () => {
