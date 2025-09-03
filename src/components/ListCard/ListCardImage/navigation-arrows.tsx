@@ -11,7 +11,9 @@ const NavigationArrows = ({ arrow }: Props) => {
     useListCardImageContext();
 
   const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault(); // Add this line
     e.stopPropagation();
+
     if (arrow === "left") {
       scrollPrev();
     } else {
