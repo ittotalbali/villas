@@ -64,7 +64,10 @@ const Filters = ({}: Props) => {
             <BedroomSelect placeholder="Bedrooms" />
           </div>
           <div className="w-full lg:w-full">
-            <ApplyFilterButton className="sm:w-full" label="Search" />
+            <ApplyFilterButton
+              className="sm:w-full bg-[#75c5f0] text-white font-semibold"
+              label="Search"
+            />
           </div>
           <div className="w-full lg:w-full">
             <FilterModalContent />

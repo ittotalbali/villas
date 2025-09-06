@@ -2,7 +2,6 @@ import { useHomeContext } from "../../contexts/context";
 import { HomeMobilesContextProvider } from "../../contexts/mobiles.context";
 import MapSection from "./map";
 import ViewModeButton from "./view-mode-button";
-import VillaListSection from "./VillaList";
 
 type Props = {
   testid?: string;
@@ -15,7 +14,6 @@ const MobileLayout = ({}: Props) => {
     zoom,
     markerRefs,
     setHoveredVilla,
-    viewMode,
     selectedVilla,
   } = useHomeContext();
 
@@ -30,10 +28,10 @@ const MobileLayout = ({}: Props) => {
     >
       <div className="h-full flex flex-col">
         {/* list View */}
-        {viewMode === "list" && <VillaListSection />}
+        {/* {viewMode === "list" && <VillaListSection />} */}
 
         {/* Map view */}
-        {viewMode === "map" && <MapSection />}
+        <MapSection />
 
         <ViewModeButton />
       </div>

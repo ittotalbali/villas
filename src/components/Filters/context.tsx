@@ -13,7 +13,7 @@ import {
   useState,
 } from "react";
 import { useHomeContext } from "../Pages/Home/contexts/context";
-import { format } from "date-fns";
+import { format, parseISO } from "date-fns";
 
 interface ContextProps {
   open: boolean;
@@ -56,14 +56,17 @@ export const FilterContextProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
+  const { filters, setFilters, clearAllFilters } = useVillaFilterStore();
   const [open, setOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("retreats");
-  const [checkInDate, setCheckInDate] = useState<Date>();
-  const [checkOutDate, setCheckOutDate] = useState<Date>();
-  const [draftFilters, setDraftFilters] = useState<VillaQueryParams>({});
+  const [checkInDate, setCheckInDate] = useState<Date | undefined>(
+    filters.start_date ? parseISO(filters.start_date) : undefined
+  );
+  const [checkOutDate, setCheckOutDate] = useState<Date | undefined>(
+    filters.end_date ? parseISO(filters.end_date) : undefined
+  );
+  const [draftFilters, setDraftFilters] = useState<VillaQueryParams>(filters);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-
-  const { filters, setFilters, clearAllFilters } = useVillaFilterStore();
 
   const { setCenter, setZoom } = useHomeContext();
 

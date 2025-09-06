@@ -3,6 +3,42 @@
   height: 100% !important;
 }
 
+@keyframes dot-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+}
+
+.animate-dot-pulse {
+  animation: dot-pulse 1.2s infinite ease-in-out;
+}
+
+.delay-0 {
+  animation-delay: 0s;
+}
+
+.delay-200 {
+  animation-delay: 0.2s;
+}
+
+.delay-400 {
+  animation-delay: 0.4s;
+}
+
+/* Ensure no clipping */
+.map-container,
+.map-container > div {
+  position: relative;
+  z-index: 0;
+  overflow: visible;
+}
+
 /* Smooth transitions for price markers */
 .marker-icon rect {
   transition: fill 0.3s ease-out, stroke 0.3s ease-out;

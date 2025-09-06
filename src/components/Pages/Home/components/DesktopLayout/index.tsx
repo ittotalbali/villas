@@ -1,8 +1,6 @@
 import { useHomeContext } from "../../contexts/context";
 import { HomeDesktopContextProvider } from "../../contexts/desktop.context";
-import MapSection from "./map";
-
-import VillaListSection from "./VillaList";
+import DesktopContent from "./content";
 
 type Props = {
   testid?: string;
@@ -27,13 +25,7 @@ const DesktopLayout = ({}: Props) => {
       markerRefs={markerRefs}
       setHoveredVilla={setHoveredVilla}
     >
-      <div className="flex desktop-layout">
-        {/* Villa List - Responsive width */}
-        <VillaListSection />
-
-        {/* Sticky Map Container - Grows with viewport */}
-        <MapSection />
-      </div>
+      <DesktopContent />
     </HomeDesktopContextProvider>
   );
 };

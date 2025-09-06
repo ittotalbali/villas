@@ -15,6 +15,8 @@ import { getMarkerIcon2 } from "../components/Map/MarkerIcon";
 
 interface ContextProps {
   currentPage: number;
+  fullMap: boolean;
+  handleFullMapMode: () => void;
   setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
   data: VillaApiResponse | undefined;
   isLoading: boolean;
@@ -65,6 +67,13 @@ export const HomeDesktopContextProvider = ({
     () => data?.data.find((v) => v.id === selectedVilla),
     [data?.data, selectedVilla]
   );
+
+  const handleFullMapMode = useCallback(() => {
+    setIsFullMap(!fullMap);
+
+    console.log("yohooo its working");
+    console.log(fullMap);
+  }, [fullMap]);
 
   const handleHover = useCallback(
     debounce((id: number | null, hover: boolean) => {
@@ -149,6 +158,8 @@ export const HomeDesktopContextProvider = ({
         selectedVilla,
         selectedVillaData,
         handleHover,
+        fullMap,
+        handleFullMapMode,
       }}
     >
       {children}

@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import type { Villa } from "@/lib/api/hooks/villas";
 import { useHomeContext } from "../../contexts/context";
 import { getMarkerIcon2 } from "./MarkerIcon";
-import { useEffect } from "react";
+import { useEffect, useRef, useCallback } from "react";
 import { useVillaFilterStore } from "@/lib/store/filterStore";
 
 type Props = {
@@ -13,9 +13,17 @@ type Props = {
   className?: string;
   style?: CSSProperties;
   villas: Villa[];
+  // Add a prop to trigger resize when container size changes
+  containerKey?: string | number;
 };
 
-const MapContent = ({ villas }: { villas: Villa[] }) => {
+const MapContent = ({
+  villas,
+  containerKey,
+}: {
+  villas: Villa[];
+  containerKey?: string | number;
+}) => {
   const map = useMap();
   const {
     center,
@@ -28,18 +36,55 @@ const MapContent = ({ villas }: { villas: Villa[] }) => {
     handleMarkerClick,
   } = useHomeContext();
   const { setFilters, filters } = useVillaFilterStore();
+  const resizeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Update map view when center or zoom changes
+  const handleResize = useCallback(() => {
+    if (resizeTimeoutRef.current) {
+      clearTimeout(resizeTimeoutRef.current);
+    }
+
+    resizeTimeoutRef.current = setTimeout(() => {
+      const currentCenter = map.getCenter();
+      map.invalidateSize({ animate: false });
+
+      map.panTo([currentCenter.lat, currentCenter.lng], { animate: false });
+    }, 100);
+  }, [map]);
+
+  useEffect(() => {
+    if (containerKey !== undefined) {
+      handleResize();
+    }
+  }, [containerKey, handleResize]);
+
+  useEffect(() => {
+    const container = map.getContainer();
+    if (!container) return;
+
+    const resizeObserver = new ResizeObserver(() => {
+      handleResize();
+    });
+
+    resizeObserver.observe(container);
+
+    return () => {
+      resizeObserver.disconnect();
+      if (resizeTimeoutRef.current) {
+        clearTimeout(resizeTimeoutRef.current);
+      }
+    };
+  }, [map, handleResize]);
+
   useEffect(() => {
     if (center && zoom && !isNaN(center[0]) && !isNaN(center[1])) {
       const currentCenter = map.getCenter();
       const currentZoom = map.getZoom();
 
-      if (
-        currentCenter.lat.toFixed(6) !== center[0].toFixed(6) ||
-        currentCenter.lng.toFixed(6) !== center[1].toFixed(6) ||
-        currentZoom !== zoom
-      ) {
+      const latDiff = Math.abs(currentCenter.lat - center[0]);
+      const lngDiff = Math.abs(currentCenter.lng - center[1]);
+      const zoomDiff = Math.abs(currentZoom - zoom);
+
+      if (latDiff > 0.000001 || lngDiff > 0.000001 || zoomDiff > 0.1) {
         map.flyTo(center, zoom);
       }
     }
@@ -48,6 +93,7 @@ const MapContent = ({ villas }: { villas: Villa[] }) => {
   return (
     <>
       <TileLayer
+        className="w-full"
         attribution='&copy; <a href="https://totalbali.com/">Total Bali</a>'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
@@ -61,7 +107,7 @@ const MapContent = ({ villas }: { villas: Villa[] }) => {
             zoom: String(z),
           });
         }}
-        onDragStartEvent={(_) => {
+        onDragStartEvent={() => {
           setFilters({
             ...filters,
             location_id: undefined,
@@ -74,13 +120,6 @@ const MapContent = ({ villas }: { villas: Villa[] }) => {
         if (!villa.latitude || !villa.longitude) return null;
         const lat = parseFloat(villa.latitude);
         const lng = parseFloat(villa.longitude);
-        // const priceLabel =
-        //   villa.base_rate && villa.base_rate_currency
-        //     ? `${villa.base_rate_currency} ${formatPrice(
-        //         Number(villa.base_rate),
-        //         villa.base_rate_currency
-        //       )}`
-        //     : "-";
         const isActive = hoveredVilla === villa.id;
         return (
           <Marker
@@ -100,7 +139,7 @@ const MapContent = ({ villas }: { villas: Villa[] }) => {
   );
 };
 
-const Map = ({ style, villas, className }: Props) => {
+const Map = ({ style, villas, className, containerKey }: Props) => {
   const { zoom, center } = useHomeContext();
 
   return (
@@ -110,7 +149,7 @@ const Map = ({ style, villas, className }: Props) => {
       className={cn("w-full h-full", className)}
       style={style}
     >
-      <MapContent villas={villas} />
+      <MapContent villas={villas} containerKey={containerKey} />
     </MapContainer>
   );
 };
