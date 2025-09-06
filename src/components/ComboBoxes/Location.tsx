@@ -178,7 +178,7 @@ export default function LocationComboBox({
         onClick={toggleOpen}
         disabled={disabled}
         className={`
-          w-full min-h-[40px] px-3 py-2 text-left bg-white border border-gray-300 rounded-md
+          w-full min-w-[200px] min-h-[40px] px-3 py-2 text-left bg-white border border-gray-300 rounded-md
           shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
           flex items-center justify-between
           ${

@@ -4,7 +4,6 @@ import {
   useInfiniteSubLocations,
   type SubLocationQueryParams,
 } from "@/lib/api/hooks/sub-locations";
-import { useVillaFilterStore } from "@/lib/store/filterStore";
 
 interface SubLocationComboBoxProps {
   value?: number;
@@ -27,7 +26,7 @@ export default function SubLocationComboBox({
   baseParams = {},
   searchDebounce = 300,
 }: SubLocationComboBoxProps) {
-  const { filters, setFilters } = useVillaFilterStore();
+  // const { filters, setFilters } = useVillaFilterStore();
   const [isOpen, setIsOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
@@ -39,7 +38,7 @@ export default function SubLocationComboBox({
   const observerRef = useRef<IntersectionObserver | null>(null);
 
   // Use store value if propValue is undefined
-  const value = propValue !== undefined ? propValue : filters.sub_location_id;
+  const value = propValue;
 
   // Debounce search
   useEffect(() => {
@@ -148,7 +147,7 @@ export default function SubLocationComboBox({
   const handleSelect = (subLocation: any) => {
     const newValue = value === subLocation.id ? undefined : subLocation.id;
     onValueChange?.(newValue);
-    setFilters({ ...filters, sub_location_id: newValue });
+    // setFilters({ ...filters, sub_location_id: newValue });
     setIsOpen(false);
     setSearchValue("");
     setHighlightedIndex(-1);
@@ -157,7 +156,7 @@ export default function SubLocationComboBox({
   const handleClear = (e: React.MouseEvent) => {
     e.stopPropagation();
     onValueChange?.(undefined);
-    setFilters({ ...filters, sub_location_id: undefined });
+    // setFilters({ ...filters, sub_location_id: undefined });
   };
 
   const toggleOpen = () => {
@@ -176,7 +175,7 @@ export default function SubLocationComboBox({
         onClick={toggleOpen}
         disabled={disabled}
         className={`
-          w-full min-h-[40px] px-3 py-2 text-left bg-white border border-gray-300 rounded-md
+          w-full min-w-[200px] min-h-[40px] px-3 py-2 text-left bg-white border border-gray-300 rounded-md
           shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
           flex items-center justify-between
           ${

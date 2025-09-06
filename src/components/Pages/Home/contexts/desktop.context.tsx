@@ -43,6 +43,7 @@ export const HomeDesktopContextProvider = ({
   setHoveredVilla: React.Dispatch<React.SetStateAction<number | null>>;
   markerRefs: React.RefObject<Record<number, L.Marker<any>>>;
 }) => {
+  const [fullMap, setIsFullMap] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const { filters } = useVillaFilterStore();
 
@@ -133,7 +134,6 @@ export const HomeDesktopContextProvider = ({
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [currentPage]);
 
-  // Reset to page 1 when filters change
   useEffect(() => {
     setCurrentPage(1);
   }, [filters]);

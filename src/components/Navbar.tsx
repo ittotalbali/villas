@@ -1,37 +1,31 @@
-import VillaFilterModal from "./Filter";
-import CurrencyComboBox from "@/components/ComboBoxes/Currency";
-import { useVillaFilterStore } from "@/lib/store/filterStore";
+import { default as NavbarImage } from "./Navbar/image";
+import { default as NavbarNavigations } from "./Navbar/navigations";
+import { FilterContextProvider } from "./Filters/context";
+import Filters from "./Navbar/filters";
 
 const Navbar = () => {
-  const { filters, setFilters } = useVillaFilterStore();
-
   return (
-    <nav className="w-full z-[10] bg-white border-b border-gray-200 py-3 px-5 lg:px-6 flex items-center justify-between">
-      <div className="flex items-center">
-        <a href="https://totalbali.com">
-          <img
-            src="https://www.totalbali.com/images/logoTb.PNG"
-            alt="Logo"
-            className="h-11 mr-5"
-          />
-        </a>
-
-        <VillaFilterModal />
-      </div>
-      <div className="flex items-center space-x-4">
-        <div className="flex items-center space-x-2 bg-white  border-gray-300 px-3 py-2">
-          <span className="hidden lg:inline font-bold">Currency</span>
-          <CurrencyComboBox
-            value={filters.curs_exchanges_id}
-            onValueChange={(value) =>
-              setFilters({ ...filters, curs_exchanges_id: value })
-            }
-            placeholder="Select currency"
-            className="w-24"
-          />
+    <div className="w-full">
+      <nav className="w-full z-[10] bg-white border-b border-gray-200 py-3 px-5 lg:px-6 flex flex-wrap items-center justify-between">
+        {/* Headers */}
+        <div className="flex justify-between gap-3 w-full lg:flex-row lg:items-center">
+          <div className="w-full lg:w-auto">
+            <NavbarImage />
+          </div>
+          <div className="w-full lg:w-full my-auto">
+            <NavbarNavigations />
+          </div>
         </div>
-      </div>
-    </nav>
+      </nav>
+      <nav className="w-full z-[10] bg-white border-b border-gray-200 py-3 px-5 lg:px-6 flex flex-wrap items-center justify-between">
+        {/* Filters */}
+        <div className="flex flex-col gap-3 w-full lg:flex-row lg:items-center">
+          <FilterContextProvider>
+            <Filters />
+          </FilterContextProvider>
+        </div>
+      </nav>
+    </div>
   );
 };
 
