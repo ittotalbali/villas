@@ -7,6 +7,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useFilterContext } from "../context";
+import { useVillaFilterStore } from "@/lib/store/filterStore";
+import { useSearchParams } from "react-router-dom";
 
 type Props = {
   testid?: string;
@@ -15,12 +17,20 @@ type Props = {
 };
 
 const BedroomSelect = ({ withLabel, placeholder = "Select" }: Props) => {
+  const [searchParams] = useSearchParams();
+  const { filters } = useVillaFilterStore();
   const { draftFilters, updateDraftFilter } = useFilterContext();
+
   return (
     <div className="space-y-2">
       {withLabel && <Label className="text-sm font-medium">Bedrooms</Label>}
       <Select
-        value={draftFilters.bedroom?.toString() || ""}
+        value={
+          searchParams.get("bedroom") ??
+          filters.bedroom?.toString() ??
+          draftFilters.bedroom?.toString() ??
+          ""
+        }
         onValueChange={(value) =>
           updateDraftFilter("bedroom", value ? parseInt(value) : undefined)
         }

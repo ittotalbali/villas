@@ -7,8 +7,8 @@ const ActionButton = () => {
     <button
       className="absolute top-3 right-3 w-7 h-7  rounded-full bg-white cursor-pointer  border-none flex items-center justify-center transition-colors duration-200 z-10"
       onClick={(e) => {
+        e.preventDefault();
         handleCloseCard();
-        e.stopPropagation();
       }}
       aria-label="Add to favorites"
     >

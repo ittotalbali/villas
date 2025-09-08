@@ -1,3 +1,4 @@
+import { Bath, Bed } from "lucide-react";
 import { useListCardContext } from "../context";
 
 type Props = {
@@ -7,26 +8,27 @@ type Props = {
 const ListCardContentDetails = ({}: Props) => {
   const { villa } = useListCardContext();
   return (
-    <p className="text-sm text-gray-600 leading-tight">
-      {villa.type_of_accommodation
-        ? villa.type_of_accommodation.charAt(0).toUpperCase() +
-          villa.type_of_accommodation.slice(1)
-        : "Accommodation"}
+    <div className="flex flex-wrap gap-2 text-sm text-gray-600 leading-tight">
       {villa.total_bedroom && (
-        <span>
-          {" "}
-          · {villa.total_bedroom} bed
-          {villa.total_bedroom !== 1 ? "s" : ""}
-        </span>
-      )}
-      {villa.total_bathroom && (
-        <span>
-          {" "}
-          · {villa.total_bathroom} bath
-          {villa.total_bathroom !== 1 ? "s" : ""}
-        </span>
-      )}
-    </p>
+          <section className="flex gap-1">
+            <Bed className="w-4 h-4 text-slate-800" />
+            <span className="my-auto">
+              {villa.total_bedroom} bed
+              {villa.total_bedroom !== 1 ? "s" : ""}
+            </span>
+          </section>
+        )}
+        ·
+        {villa.total_bathroom && (
+          <section className="flex gap-1">
+            <Bath className="w-4 h-4 text-slate-800" />
+            <span className="my-auto">
+              {villa.total_bathroom} bath
+              {villa.total_bathroom !== 1 ? "s" : ""}
+            </span>
+          </section>
+        )}
+    </div>
   );
 };
 

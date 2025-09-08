@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { Check, ChevronsUpDown, Loader2, X } from "lucide-react";
 import { useCurrencies } from "@/lib/api/hooks/currencies/useCurrencies";
 import { useVillaFilterStore } from "@/lib/store/filterStore";
+import { useSearchParams } from "react-router-dom";
 
 interface CurrencyComboBoxProps {
   value?: number;
@@ -21,6 +22,7 @@ export default function CurrencyComboBox({
   className = "",
 }: CurrencyComboBoxProps) {
   const { filters, setFilters } = useVillaFilterStore();
+  const [_, setSearchParams] = useSearchParams();
   const [isOpen, setIsOpen] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
 
@@ -90,12 +92,30 @@ export default function CurrencyComboBox({
     setFilters({ ...filters, curs_exchanges_id: newValue });
     setIsOpen(false);
     setHighlightedIndex(-1);
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+
+      if (newValue) {
+        next.set("curs_exchanges_id", String(newValue));
+      } else {
+        next.delete("curs_exchanges_id");
+      }
+
+      return next;
+    });
   };
 
   const handleClear = (e: React.MouseEvent) => {
     e.stopPropagation();
     onValueChange?.(undefined);
     setFilters({ ...filters, curs_exchanges_id: undefined });
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+
+      next.delete("curs_exchanges_id");
+
+      return next;
+    });
   };
 
   const toggleOpen = () => {

@@ -3,17 +3,21 @@ import VillaListSection from "./VillaList";
 import { useHomeDesktopContext } from "../../contexts/desktop.context";
 import { useHomeContext } from "../../contexts/context";
 import { useCallback } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { List } from "lucide-react";
 
 const DesktopContent = () => {
   const { fullMap } = useHomeDesktopContext();
-  const navigate = useNavigate();
   const { viewMode, setViewMode } = useHomeContext();
-  const [searchParams] = useSearchParams();
-  const lat = parseFloat(searchParams.get("lat") ?? "-8.663804");
-  const lng = parseFloat(searchParams.get("lng") ?? "115.141362");
-  const zoom = searchParams.get("zoom") ?? "12";
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const handleNavigate = () => {
+    navigate({
+      pathname: "/",
+      search: location.search,
+    });
+  };
 
   const handleShowMap = useCallback(() => {
     setViewMode("list");
@@ -35,7 +39,7 @@ const DesktopContent = () => {
     xs:px-3 xs:py-1.5 xs:text-xs xs:min-w-[90px] xs:gap-1"
         onClick={() => {
           // Add your map showing logic here
-          navigate(`/` + `?lat=${lat}&lng=${lng}&zoom=${zoom}`);
+          handleNavigate();
           handleShowMap();
         }}
       >

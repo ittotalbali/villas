@@ -1,8 +1,8 @@
 import { default as NavbarImage } from "./Navbar/image";
 import { default as NavbarNavigations } from "./Navbar/navigations";
-import { FilterContextProvider } from "./Filters/context";
 import DesktopFilters from "./Navbar/filters/desktop.filter";
 import { cn } from "@/lib/utils";
+import { FilterContextProvider } from "./Filters/context";
 
 const Navbar = () => {
   return (

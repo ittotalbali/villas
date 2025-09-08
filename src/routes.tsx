@@ -7,6 +7,8 @@ import RootLayout from "./components/Layout/RootLayout";
 import HomePage from "./Pages/Home";
 import ListPage from "./Pages/List";
 
+const basename = import.meta.env.VITE_PUBLIC_URL;
+
 const router = createBrowserRouter(
   [
     {
@@ -34,7 +36,7 @@ const router = createBrowserRouter(
       ),
     },
   ],
-  {}
+  { basename }
 );
 
 const AppRoutes = () => <RouterProvider router={router} />;

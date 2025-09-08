@@ -77,7 +77,7 @@ const ListCard = ({
           "group flex flex-col bg-white cursor-pointer transition-all duration-200",
           // isSelected && "ring-2 ring-black ring-offset-2",
           "border border-gray-300 rounded-xl",
-          "hover:scale-[1.02] hover:shadow-lg",
+          "hover:scale-[1.02] hover:shadow-lg ",
           forMap &&
             "absolute top-4 right-4 z-[1000] w-[360px] max-w-[70%] lg:max-w-[50%] villa-card h-[350px]"
         )}

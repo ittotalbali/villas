@@ -4,7 +4,7 @@ import ListCardSkeleton from "@/components/ListCard/skeleton";
 import { generateVillaSlug } from "@/lib/utils";
 import ListCard from "@/components/ListCard";
 import { useState, useEffect, useRef, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useHomeContext } from "../Home/contexts/context";
 import { Map } from "lucide-react";
 
@@ -19,9 +19,18 @@ const ListContent = () => {
   } = useListContext();
   const { viewMode, setViewMode } = useHomeContext();
   const villas = flattenInfiniteVillas(data);
-  const navigate = useNavigate();
   const [showScrollTop, setShowScrollTop] = useState(false);
   const listContainerRef = useRef<HTMLDivElement | null>(null);
+
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const handleNavigate = () => {
+    navigate({
+      pathname: "/map",
+      search: location.search,
+    });
+  };
 
   const handleShowMap = useCallback(() => {
     setViewMode("map");
@@ -133,7 +142,7 @@ const ListContent = () => {
     xs:px-3 xs:py-1.5 xs:text-xs xs:min-w-[90px] xs:gap-1"
         onClick={() => {
           // Add your map showing logic here
-          navigate("/map");
+          handleNavigate();
           handleShowMap();
         }}
       >

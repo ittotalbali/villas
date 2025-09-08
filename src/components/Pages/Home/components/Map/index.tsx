@@ -7,13 +7,13 @@ import { useHomeContext } from "../../contexts/context";
 import { getMarkerIcon2 } from "./MarkerIcon";
 import { useEffect, useRef, useCallback } from "react";
 import { useVillaFilterStore } from "@/lib/store/filterStore";
+import L from "leaflet";
 
 type Props = {
   testid?: string;
   className?: string;
   style?: CSSProperties;
   villas: Villa[];
-  // Add a prop to trigger resize when container size changes
   containerKey?: string | number;
 };
 
@@ -38,6 +38,11 @@ const MapContent = ({
   const { setFilters, filters } = useVillaFilterStore();
   const resizeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
+  // Track if this is the initial load or user is interacting
+  const initialFitDone = useRef(false);
+  const userInteracting = useRef(false);
+  const lastVillaCount = useRef(0);
+
   const handleResize = useCallback(() => {
     if (resizeTimeoutRef.current) {
       clearTimeout(resizeTimeoutRef.current);
@@ -46,7 +51,6 @@ const MapContent = ({
     resizeTimeoutRef.current = setTimeout(() => {
       const currentCenter = map.getCenter();
       map.invalidateSize({ animate: false });
-
       map.panTo([currentCenter.lat, currentCenter.lng], { animate: false });
     }, 100);
   }, [map]);
@@ -85,35 +89,76 @@ const MapContent = ({
       const zoomDiff = Math.abs(currentZoom - zoom);
 
       if (latDiff > 0.000001 || lngDiff > 0.000001 || zoomDiff > 0.1) {
+        userInteracting.current = true;
         map.flyTo(center, zoom);
       }
     }
   }, [center, zoom, map]);
+
+  useEffect(() => {
+    if (!map || !villas || villas.length === 0) return;
+
+    const shouldFitBounds =
+      !initialFitDone.current ||
+      (lastVillaCount.current === 0 && villas.length > 0) ||
+      (Math.abs(lastVillaCount.current - villas.length) > 3 &&
+        !userInteracting.current);
+
+    if (shouldFitBounds) {
+      const bounds = L.latLngBounds(
+        villas
+          .filter((v) => v.latitude && v.longitude)
+          .map((v) => [parseFloat(v.latitude!), parseFloat(v.longitude!)])
+      );
+
+      if (bounds.isValid()) {
+        map.fitBounds(bounds, { padding: [70, 70] });
+        initialFitDone.current = true;
+      }
+    }
+
+    lastVillaCount.current = villas.length;
+  }, [map, villas]);
 
   return (
     <>
       <TileLayer
         className="w-full"
         attribution='&copy; <a href="https://totalbali.com/">Total Bali</a> | &copy; Google'
-        // url="https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}"
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
       <MapEvents
         onMove={(c, z) => {
-          setCenter([c.lat, c.lng]);
-          setZoom(z);
-          setSearchParams({
-            lat: c.lat.toFixed(6),
-            lng: c.lng.toFixed(6),
-            zoom: String(z),
-          });
+          if (userInteracting.current) {
+            setCenter([c.lat, c.lng]);
+            setZoom(z);
+            setSearchParams((prev) => {
+              const next = new URLSearchParams(prev);
+
+              next.set("lat", c.lat.toFixed(6));
+              next.set("lng", c.lng.toFixed(6));
+              next.set("zoom", String(z));
+
+              return next;
+            });
+          }
         }}
         onDragStartEvent={() => {
+          userInteracting.current = true;
           setFilters({
             ...filters,
             location_id: undefined,
             sub_location_id: undefined,
             area_id: undefined,
+          });
+          setSearchParams((prev) => {
+            const next = new URLSearchParams(prev);
+
+            next.delete("area_id");
+            next.delete("location_id");
+            next.delete("sub_location_id");
+
+            return next;
           });
         }}
       />

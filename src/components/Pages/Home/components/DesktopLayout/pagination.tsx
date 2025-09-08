@@ -52,7 +52,7 @@ const Pagination = ({}: Props) => {
   const pageNumbers = getPageNumbers();
 
   return (
-    <div className="flex items-center justify-between px-4 py-6 border-t border-gray-200 flex-shrink-0">
+    <div className="flex items-center justify-between px-4 py-6 border-t mt-2 border-gray-200 flex-shrink-0">
       <button
         className={cn(
           "px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium",

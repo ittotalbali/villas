@@ -10,13 +10,8 @@ type Props = {
 };
 
 const ClearAllFilterButton = ({ label, className }: Props) => {
-  const {
-    draftFilters,
-    clearAllDraftFilters,
-    getDraftActiveFilterCount,
-    open,
-    setOpen,
-  } = useFilterContext();
+  const { draftFilters, clearAllDraftFilters, open, setOpen } =
+    useFilterContext();
 
   const handleClick = useCallback(() => {
     clearAllDraftFilters();
@@ -27,7 +22,6 @@ const ClearAllFilterButton = ({ label, className }: Props) => {
     <Button
       variant="outline"
       onClick={handleClick}
-      disabled={getDraftActiveFilterCount === 0}
       className={cn(
         "w-full sm:w-auto border min-h-[42px] border-gray-300",
         className

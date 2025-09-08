@@ -4,6 +4,7 @@ import { HomeMobilesContextProvider } from "../../contexts/mobiles.context";
 import MapSection from "./map";
 import { List } from "lucide-react";
 import { useCallback } from "react";
+import { useVillaFilterStore } from "@/lib/store/filterStore";
 
 type Props = {
   testid?: string;
@@ -23,9 +24,12 @@ const MobileLayout = ({}: Props) => {
 
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const lat = parseFloat(searchParams.get("lat") ?? "-8.663804");
-  const lng = parseFloat(searchParams.get("lng") ?? "115.141362");
-  const zoomS = searchParams.get("zoom") ?? "12";
+  const { filters } = useVillaFilterStore();
+  const lat = parseFloat(searchParams.get("lat") ?? filters.lat ?? "-8.663804");
+  const lng = parseFloat(
+    searchParams.get("lng") ?? filters.lng ?? "115.141362"
+  );
+  const zoomS = searchParams.get("zoom") ?? filters.zoom ?? "12";
 
   const handleShowMap = useCallback(() => {
     setViewMode("list");

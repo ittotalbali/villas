@@ -1,14 +1,17 @@
 <IfModule mod_rewrite.c>
   Options -MultiViews
   RewriteEngine On
-  RewriteBase /villa  # Your subdir (e.g., /villanew for totalbali.com/villanew)
 
-  # Skip /property/* (let property/.htaccess handle PHP rewrites)
-  RewriteCond %{REQUEST_URI} ^/property/
-  RewriteRule ^ - [L]
+  # Handle PHP project at /villa/property
+  RewriteCond %{REQUEST_URI} ^/villa/property/
+  RewriteRule ^ - [L] # Let Apache handle this path normally
 
-  # Skip if file or dir exists (covers assets, index.html; no symlink/OR chain to avoid false skips)
+  # Handle React app at /villa - send all requests to index.html
+  RewriteCond %{REQUEST_URI} ^/villa/
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
-  RewriteRule . index.html [L]
+  RewriteRule ^villa/.* /villa/index.html [L]
+
+  # Redirect root to /villa if needed
+  RewriteRule ^$ /villa/ [R=301,L]
 </IfModule>

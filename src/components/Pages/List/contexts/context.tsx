@@ -7,6 +7,7 @@ import type {
   InfiniteQueryObserverResult,
 } from "@tanstack/react-query";
 import { useSearchParams } from "react-router-dom";
+import { useVillaFilterStore } from "@/lib/store/filterStore";
 
 interface ContextProps {
   data: InfiniteVillaResponse | undefined;
@@ -29,9 +30,13 @@ export const ListContextProvider = ({
 }) => {
   const observerTarget = useRef<HTMLDivElement>(null);
   const [searchParams] = useSearchParams();
-  const lat = parseFloat(searchParams.get("lat") ?? "-8.663804");
-  const lng = parseFloat(searchParams.get("lng") ?? "115.141362");
-  const zoom = searchParams.get("zoom") ?? "12";
+  const { filters } = useVillaFilterStore();
+
+  const lat = parseFloat(searchParams.get("lat") ?? filters.lat ?? "-8.663804");
+  const lng = parseFloat(
+    searchParams.get("lng") ?? filters.lng ?? "115.141362"
+  );
+  const zoom = searchParams.get("zoom") ?? filters.zoom?.toString() ?? "12";
 
   const {
     data,

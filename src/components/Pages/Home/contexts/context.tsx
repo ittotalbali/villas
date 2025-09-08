@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import L from "leaflet";
+import { useVillaFilterStore } from "@/lib/store/filterStore";
 
 type ViewMode = "list" | "map";
 
@@ -44,9 +45,10 @@ export const HomeContextProvider = ({
   );
   const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 1024);
   const [viewMode, setViewMode] = useState<ViewMode>("list");
+  const { filters } = useVillaFilterStore();
   const [center, setCenter] = useState<[number, number]>([
-    parseFloat(searchParams.get("lat") ?? "-8.663804"),
-    parseFloat(searchParams.get("lng") ?? "115.141362"),
+    parseFloat(searchParams.get("lat") ?? filters.lat ?? "-8.663804"),
+    parseFloat(searchParams.get("lng") ?? filters.lng ?? "115.141362"),
   ]);
   const [centerLocation, setCenterLocation] = useState<[number, number]>([
     parseFloat("-8.663804"),

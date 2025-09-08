@@ -21,7 +21,7 @@ const MapSection = () => {
         position: "relative",
       }}
     >
-      <div className="sticky top-4 h-[calc(92vh-2rem)] pt-4 ">
+      <div className="sticky top-4 h-[calc(92vh-1rem)] pt-1 ">
         <div
           className="w-full h-full bg-white rounded-lg shadow-lg border border-gray-200 my-auto"
           style={{ position: "relative", overflow: "visible" }}

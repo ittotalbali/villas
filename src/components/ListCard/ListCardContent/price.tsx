@@ -18,7 +18,7 @@ const ListCardContentPrice = ({}: Props) => {
               villa.base_rate_currency || "USD"
             )}
           </span>
-          <span className="font-normal"> night</span>
+          <span className="font-normal"> / night</span>
         </p>
       ) : (
         <p className="text-sm text-gray-500">Price on request</p>
