@@ -1,8 +1,9 @@
 import Map from "../Map";
 import { useHomeDesktopContext } from "../../contexts/desktop.context";
 import { useHomeContext } from "../../contexts/context";
-import MarkerCard from "../MarkerCard";
 import { Expand, X } from "lucide-react";
+import ListCard from "@/components/ListCard";
+import { generateVillaSlug } from "@/lib/utils";
 
 const MapSection = () => {
   const { showCard, handleCloseCard } = useHomeContext();
@@ -65,7 +66,22 @@ const MapSection = () => {
             }}
           />
           {showCard && selectedVillaData && (
-            <MarkerCard villa={selectedVillaData} onClose={handleCloseCard} />
+            <a
+              key={`${selectedVillaData.id}`}
+              href={generateVillaSlug(selectedVillaData)}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <ListCard
+                villa={selectedVillaData}
+                isSelected={false}
+                onClick={() => {}}
+                onMouseEnter={() => {}}
+                onMouseLeave={() => {}}
+                forMap
+                handleCloseCard={handleCloseCard}
+              />
+            </a>
           )}
         </div>
       </div>

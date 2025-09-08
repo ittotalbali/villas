@@ -1,8 +1,9 @@
 import { flattenInfiniteVillas } from "@/lib/utils/villas";
 import { useHomeMobilesContext } from "../../contexts/mobiles.context";
 import Map from "../Map";
-import MarkerCard from "../MarkerCard";
 import { useHomeContext } from "../../contexts/context";
+import ListCard from "@/components/ListCard";
+import { generateVillaSlug } from "@/lib/utils";
 
 type Props = {
   testid?: string;
@@ -38,7 +39,22 @@ const MapSection = ({}: Props) => {
         </div>
       )}
       {showCard && selectedVillaData && (
-        <MarkerCard villa={selectedVillaData} onClose={handleCloseCard} />
+        <a
+          key={`${selectedVillaData.id}`}
+          href={generateVillaSlug(selectedVillaData)}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <ListCard
+            villa={selectedVillaData}
+            isSelected={false}
+            onClick={() => {}}
+            onMouseEnter={() => {}}
+            onMouseLeave={() => {}}
+            forMap
+            handleCloseCard={handleCloseCard}
+          />
+        </a>
       )}
     </div>
   );

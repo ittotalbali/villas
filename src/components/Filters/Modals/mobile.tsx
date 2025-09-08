@@ -6,7 +6,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../../ui/dialog";
-import FilterButton from "../Buttons/filter";
 import { useFilterContext } from "../context";
 import FilterContent from "../FilterModalContent/mobile";
 import ActionButton from "../action.button";

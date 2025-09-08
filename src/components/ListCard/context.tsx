@@ -3,6 +3,8 @@ import { createContext, useContext } from "react";
 
 interface ContextProps {
   villa: Villa;
+  handleCloseCard: () => void;
+  forMap?: boolean;
 }
 
 const Context = createContext<ContextProps | undefined>(undefined);
@@ -10,11 +12,19 @@ const Context = createContext<ContextProps | undefined>(undefined);
 export const ListCardContextProvider = ({
   children,
   villa,
+  handleCloseCard,
+  forMap = false,
 }: {
   children: React.ReactNode;
   villa: Villa;
+  handleCloseCard: () => void;
+  forMap?: boolean;
 }) => {
-  return <Context.Provider value={{ villa }}>{children}</Context.Provider>;
+  return (
+    <Context.Provider value={{ villa, handleCloseCard, forMap }}>
+      {children}
+    </Context.Provider>
+  );
 };
 
 export const useListCardContext = () => {

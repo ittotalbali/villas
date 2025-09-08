@@ -11,7 +11,8 @@ type Props = {
 };
 
 const VillaListSection = ({}: Props) => {
-  const { handleMarkerClick, selectedVilla } = useHomeContext();
+  const { handleMarkerClick, selectedVilla, handleCloseCard } =
+    useHomeContext();
   const { data, isLoading, isError, handleHover } = useHomeDesktopContext();
 
   const totalVillas = getTotalVillaCount(data) | 0;
@@ -70,6 +71,8 @@ const VillaListSection = ({}: Props) => {
                 <ListCard
                   key={`${villa.id}-${index}`}
                   villa={villa}
+                  forMap={false}
+                  handleCloseCard={handleCloseCard}
                   isSelected={selectedVilla === villa.id}
                   onClick={() => handleMarkerClick(villa.id)}
                   onMouseEnter={() => handleHover(villa.id, true)}

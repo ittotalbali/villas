@@ -5,9 +5,11 @@ import { ListCardImageContextProvider } from "./context";
 import Dots from "./dots";
 import { default as Image } from "./image";
 import { default as NoImage } from "./no-image";
+import ActionButton from "./action-button";
+import { cn } from "@/lib/utils";
 
 const ListCardImage = () => {
-  const { villa } = useListCardContext();
+  const { villa, forMap } = useListCardContext();
 
   const totalImages = villa.albums?.length || 0;
   const shouldShowDots = totalImages > 1;
@@ -15,7 +17,12 @@ const ListCardImage = () => {
 
   return (
     <ListCardImageContextProvider totalImages={totalImages}>
-      <div className="relative w-full aspect-square overflow-hidden rounded-xl mb-3 group">
+      <div
+        className={cn(
+          "relative w-full aspect-square overflow-hidden  mb-3 group",
+          forMap ? "rounded-t-xl" : "rounded-xl"
+        )}
+      >
         {totalImages > 0 ? (
           <div className="relative w-full h-[calc(100%)]">
             <Image />
@@ -27,7 +34,7 @@ const ListCardImage = () => {
               </>
             )}
 
-            <HeartButton />
+            {forMap ? <ActionButton /> : <HeartButton />}
 
             {shouldShowDots && <Dots />}
           </div>
