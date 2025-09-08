@@ -93,6 +93,7 @@ const ListContent = () => {
                   key={`${villa.id}-${index}`}
                   villa={villa}
                   isSelected={false}
+                  handleCloseCard={() => {}}
                   onClick={() => {}}
                   onMouseEnter={() => {}}
                   onMouseLeave={() => {}}

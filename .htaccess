@@ -1,0 +1,14 @@
+RewriteEngine On
+
+# Serve React static assets directly (e.g., /assets/*)
+RewriteCond %{REQUEST_URI} ^/assets/
+RewriteRule ^ - [L]
+
+# For /property/*: Skip rewrites (let subfolder .htaccess or direct serve handle)
+RewriteCond %{REQUEST_URI} ^/property/
+RewriteRule ^ - [L]
+
+# For all other paths: If not a real file/dir, fallback to index.html for React Router
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.html [L]

@@ -43,5 +43,6 @@ export function generateVillaSlug(villa: Villa): string {
 
   // Join parts with hyphens
   const slug = slugParts.join("-");
-  return `https://villa.totalbali.com/property/${slug}`;
+  // return `https://villa.totalbali.com/property/${slug}`;
+  return `/property/${slug}`;
 }

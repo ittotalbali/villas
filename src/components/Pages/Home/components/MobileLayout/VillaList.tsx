@@ -10,7 +10,8 @@ type Props = {
 };
 
 const VillaListSection = ({}: Props) => {
-  const { handleMarkerClick, selectedVilla } = useHomeContext();
+  const { handleMarkerClick, selectedVilla, handleCloseCard } =
+    useHomeContext();
   const {
     data,
     isLoading,
@@ -66,6 +67,7 @@ const VillaListSection = ({}: Props) => {
               >
                 <ListCard
                   key={`${villa.id}-${index}`}
+                  handleCloseCard={handleCloseCard}
                   villa={villa}
                   isSelected={selectedVilla === villa.id}
                   onClick={() => handleMarkerClick(villa.id)}
