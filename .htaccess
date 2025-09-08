@@ -1,16 +1,14 @@
-RewriteEngine On
-RewriteBase /villa/  # Your subdir (change to /villanew/ for prod)
+<IfModule mod_rewrite.c>
+  Options -MultiViews
+  RewriteEngine On
+  RewriteBase /villa  # Your subdir (e.g., /villanew for totalbali.com/villanew)
 
-# Serve React static assets directly (e.g., /villa/assets/*)
-RewriteCond %{REQUEST_URI} ^/assets/
-RewriteRule ^ - [L]
+  # Skip /property/* (let property/.htaccess handle PHP rewrites)
+  RewriteCond %{REQUEST_URI} ^/property/
+  RewriteRule ^ - [L]
 
-# For /property/*: Skip rewrites (let subfolder .htaccess or direct serve handle)
-# Note: Full path is /villa/property/*, but REQUEST_URI starts with /property after base
-RewriteCond %{REQUEST_URI} ^/property/
-RewriteRule ^ - [L]
-
-# For all other paths: If not a real file/dir, fallback to index.html for React Router
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^ villa/index.html [L]  # Explicit: Targets subdir index.html
+  # Skip if file or dir exists (covers assets, index.html; no symlink/OR chain to avoid false skips)
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule . index.html [L]
+</IfModule>
