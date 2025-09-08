@@ -17,7 +17,9 @@ const PropertyOptions = ({}: Props) => {
       { key: "monthly_rental", label: "Monthly Rental" },
       { key: "yearly_rental", label: "Yearly Rental" },
       { key: "close_clubs", label: "Close to Clubs" },
-    ].map(({ key, label }) => <PropertyTypeCheckbox key={key} label={label} />);
+    ].map(({ key, label }) => (
+      <PropertyTypeCheckbox key={key} label={label} checkKey={key} />
+    ));
   }, [draftFilters, updateDraftFilter]);
 
   return (

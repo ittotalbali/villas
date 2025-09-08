@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { default as NavbarCurrency } from "../currency";
 import Link from "./link";
+import { default as NavbarImage } from "../image";
 
 type Props = {
   testid?: string;
@@ -49,6 +50,9 @@ const Navigations = ({}: Props) => {
         id="mobile-menu"
       >
         <div className="flex justify-end">
+          <div className="w-full lg:w-auto">
+            <NavbarImage />
+          </div>
           <button
             onClick={toggleMenu}
             className="p-2 focus:outline-none"

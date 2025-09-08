@@ -12,7 +12,7 @@ const ApplyFilterButton = ({ label, className }: Props) => {
   const { applyFilters, getDraftActiveFilterCount } = useFilterContext();
 
   return (
-    <div className="relative inline-block">
+    <div className="w-full relative inline-block">
       <Button
         onClick={applyFilters}
         className={cn(

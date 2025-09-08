@@ -17,7 +17,7 @@ const Currency = ({}: Props) => {
             setFilters({ ...filters, curs_exchanges_id: value })
           }
           placeholder="Select currency"
-          className="w-24"
+          className="w-auto"
         />
       </div>
     </div>

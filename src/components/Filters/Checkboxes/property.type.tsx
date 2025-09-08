@@ -5,36 +5,36 @@ import { Label } from "../../ui/label";
 
 type Props = {
   testid?: string;
-  key: string;
+  checkKey: string;
   label: string;
 };
 
-const PropertyTypeCheckbox = ({ key, label }: Props) => {
+const PropertyTypeCheckbox = ({ checkKey, label }: Props) => {
   const { draftFilters, updateDraftFilter } = useFilterContext();
 
   return (
-    <div key={key} className="flex items-center space-x-2">
+    <div key={checkKey} className="flex items-center space-x-2">
       <Checkbox
-        id={key}
+        id={checkKey}
         checked={
-          draftFilters[key as keyof VillaQueryParams] ===
-          (key === "close_clubs" ? true : "yes")
+          draftFilters[checkKey as keyof VillaQueryParams] ===
+          (checkKey === "close_clubs" ? true : "yes")
         }
         onCheckedChange={(checked) => {
-          if (key === "close_clubs") {
+          if (checkKey === "close_clubs") {
             updateDraftFilter(
-              key as keyof VillaQueryParams,
+              checkKey as keyof VillaQueryParams,
               checked || undefined
             );
           } else {
             updateDraftFilter(
-              key as keyof VillaQueryParams,
+              checkKey as keyof VillaQueryParams,
               checked ? "yes" : undefined
             );
           }
         }}
       />
-      <Label htmlFor={key} className="text-sm">
+      <Label htmlFor={checkKey} className="text-sm">
         {label}
       </Label>
     </div>

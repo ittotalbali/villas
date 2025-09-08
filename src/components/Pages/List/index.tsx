@@ -6,6 +6,7 @@ import ListCard from "@/components/ListCard";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useHomeContext } from "../Home/contexts/context";
+import { Map } from "lucide-react";
 
 const ListContent = () => {
   const {
@@ -124,26 +125,41 @@ const ListContent = () => {
 
       {/* Floating Show Map Button */}
       <button
-        className="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-[#75c5f0] text-white px-6 py-3 rounded-full shadow-lg hover:bg-[#75c5f0] transition-colors z-10"
+        className="fixed bottom-4 left-1/2 font-semibold transform -translate-x-1/2 bg-[#75c5f0] text-white shadow-lg hover:bg-[#5ab3db] active:bg-[#4a9bc4] transition-all duration-200 z-10 flex items-center justify-center gap-2
+    px-6 py-3 rounded-full text-base min-w-[140px]
+    md:px-5 md:py-2.5 md:text-sm md:min-w-[120px]
+    sm:px-4 sm:py-2 sm:text-sm sm:min-w-[100px] sm:gap-1.5
+    xs:px-3 xs:py-1.5 xs:text-xs xs:min-w-[90px] xs:gap-1"
         onClick={() => {
           // Add your map showing logic here
           navigate("/map");
           handleShowMap();
         }}
       >
-        Show Map
+        <Map className="w-5 h-5 md:w-4 md:h-4 sm:w-4 sm:h-4 xs:w-3.5 xs:h-3.5" />
+        <span className="sm:hidden xs:hidden">Map</span>
+        <span className="hidden sm:inline xs:inline">Show Map</span>
       </button>
 
       {/* Floating Scroll to Top Button */}
       {showScrollTop && (
         <button
-          className="fixed bottom-6 right-6 bg-gray-500 text-white p-3 rounded-full shadow-lg hover:bg-gray-600 transition-colors z-10"
+          className="fixed bg-gray-500 text-white rounded-full shadow-lg hover:bg-gray-600 active:bg-gray-700 transition-all duration-200 z-10 bottom-6 right-6 p-3
+    md:bottom-5 md:right-5 md:p-2.5
+    sm:bottom-4 sm:right-4 sm:p-2
+    xs:bottom-3 xs:right-3 xs:p-1.5"
           onClick={scrollToTop}
         >
           <svg
-            className="w-6 h-6"
-            fill="none"
-            stroke="currentColor"
+            className="fill-none stroke-current
+      /* Desktop icon size */
+      w-6 h-6
+      /* Tablet icon size */
+      md:w-5 md:h-5
+      /* Mobile icon size */
+      sm:w-4 sm:h-4
+      /* Extra small icon size */
+      xs:w-3.5 xs:h-3.5"
             viewBox="0 0 24 24"
             xmlns="http://www.w3.org/2000/svg"
           >
