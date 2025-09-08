@@ -6,10 +6,11 @@ import { SlidersHorizontal } from "lucide-react";
 
 type Props = {
   testid?: string;
+  labelStr?: string;
 } & React.ComponentPropsWithoutRef<"button">;
 
 const FilterButton = forwardRef<HTMLButtonElement, Props>(
-  ({ testid, ...props }, ref) => {
+  ({ testid, labelStr, ...props }, ref) => {
     const { getActiveFilterCount } = useVillaFilterStore();
     const count = getActiveFilterCount();
 
@@ -22,7 +23,7 @@ const FilterButton = forwardRef<HTMLButtonElement, Props>(
         data-testid={testid}
       >
         <SlidersHorizontal className="h-5 w-5" />
-        Filters
+        {labelStr ? labelStr : ""}
         {count > 0 && (
           <Badge
             variant="destructive"

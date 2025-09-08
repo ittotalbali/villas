@@ -7,7 +7,7 @@ type Props = {
 
 const Image = ({ className }: Props) => {
   return (
-    <div className="flex items-center ">
+    <div className="flex items-center">
       <a href="https://totalbali.com">
         <img
           src="https://www.totalbali.com/images/logoTb.PNG"

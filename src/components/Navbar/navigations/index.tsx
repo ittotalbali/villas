@@ -19,7 +19,7 @@ const Navigations = ({}: Props) => {
   return (
     <div className="relative w-full flex items-center justify-end">
       {/* Hamburger Button for Mobile */}
-      <div className="flex justify-end lg:hidden w-full">
+      <div className="flex justify-end lg:hidden ">
         <MobileFilters />
         <button
           onClick={toggleMenu}
@@ -55,6 +55,7 @@ const Navigations = ({}: Props) => {
           <div className="w-full lg:w-auto">
             <NavbarImage />
           </div>
+          <NavbarCurrency />
           <button
             onClick={toggleMenu}
             className="p-2 focus:outline-none"
@@ -72,7 +73,6 @@ const Navigations = ({}: Props) => {
           <Link text="Bali on Demand" link="https://baliondemand.com" />
           <Link text="Blog" link="https://www.totalbali.com/blog/" />
           <Link text="Contact" link="https://totalbali.com/contact" />
-          <NavbarCurrency />
         </div>
       </div>
 

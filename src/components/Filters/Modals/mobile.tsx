@@ -1,4 +1,4 @@
-import { Home } from "lucide-react";
+import { Home, SlidersHorizontal } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -10,6 +10,9 @@ import FilterButton from "../Buttons/filter";
 import { useFilterContext } from "../context";
 import FilterContent from "../FilterModalContent/mobile";
 import ActionButton from "../action.button";
+import { useVillaFilterStore } from "@/lib/store/filterStore";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 type Props = {
   testid?: string;
@@ -17,11 +20,26 @@ type Props = {
 
 const FilterModalMobile = ({}: Props) => {
   const { open, setOpen } = useFilterContext();
+  const { getActiveFilterCount } = useVillaFilterStore();
+  const count = getActiveFilterCount();
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <FilterButton />
+        <Button
+          variant="outline"
+          className="relative rounded-md flex items-center justify-center p-0 border border-gray-300 min-h-[42px] "
+        >
+          <SlidersHorizontal className="h-6 w-6" />
+          {count > 0 && (
+            <Badge
+              variant="destructive"
+              className="absolute -top-1 -right-1 h-5 w-5 p-0 flex items-center justify-center text-xs"
+            >
+              {count}
+            </Badge>
+          )}
+        </Button>
       </DialogTrigger>
       <DialogContent
         className="w-[95vw] max-w-5xl h-[95vh] max-h-[95vh] z-[1000] flex flex-col p-0 bg-white border-gray-300"
