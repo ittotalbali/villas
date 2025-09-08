@@ -179,45 +179,38 @@ export const FilterContextProvider = ({
 
   const updateDraftVillaTypeFilter = useCallback(
     (villaType: keyof VillaQueryParams, key: string, value: any) => {
-      // Capture current scroll position
       const scrollPosition = scrollContainerRef.current?.scrollTop || 0;
 
       setDraftFilters((prev) => {
-        const currentParams =
-          (prev[villaType] as any)?.params ||
-          (villaType === "wedding_villa" ? {} : []);
+        const currentVillaTypeData = prev[villaType] as any;
+        const currentParams = currentVillaTypeData?.params || {};
 
-        let newFilters;
-        if (
-          villaType === "wedding_villa" &&
-          typeof currentParams === "object" &&
-          !Array.isArray(currentParams)
-        ) {
-          // Wedding villa has mixed params structure
-          newFilters = {
-            ...prev,
-            [villaType]: {
-              params: {
-                ...currentParams,
-                [key]: value,
-              },
-            },
-          };
-        } else if (Array.isArray(currentParams)) {
-          // Other villa types use string arrays
-          const newParams = value
-            ? [...currentParams.filter((p) => p !== key), key]
-            : currentParams.filter((p) => p !== key);
+        // Create new params object
+        const newParams = { ...currentParams };
 
-          newFilters = {
-            ...prev,
-            [villaType]: { params: newParams },
-          };
+        // Handle the checkbox value properly
+        if (value === true) {
+          newParams[key] = true;
         } else {
-          newFilters = prev;
+          // Remove the key entirely when unchecked
+          delete newParams[key];
         }
 
-        // Restore scroll position after state update
+        // Clean up undefined values
+        const cleanedParams = Object.fromEntries(
+          Object.entries(newParams).filter(
+            ([_, v]) => v !== undefined && v !== false
+          )
+        );
+
+        const newFilters = {
+          ...prev,
+          [villaType]:
+            Object.keys(cleanedParams).length > 0
+              ? { params: cleanedParams }
+              : undefined,
+        };
+
         requestAnimationFrame(() => {
           if (scrollContainerRef.current) {
             scrollContainerRef.current.scrollTop = scrollPosition;
@@ -229,6 +222,58 @@ export const FilterContextProvider = ({
     },
     []
   );
+  // const updateDraftVillaTypeFilter = useCallback(
+  //   (villaType: keyof VillaQueryParams, key: string, value: any) => {
+  //     // Capture current scroll position
+  //     const scrollPosition = scrollContainerRef.current?.scrollTop || 0;
+
+  //     setDraftFilters((prev) => {
+  //       const currentParams =
+  //         (prev[villaType] as any)?.params ||
+  //         (villaType === "wedding_villa" ? {} : []);
+
+  //       let newFilters;
+  //       if (
+  //         villaType === "wedding_villa" &&
+  //         typeof currentParams === "object" &&
+  //         !Array.isArray(currentParams)
+  //       ) {
+  //         // Wedding villa has mixed params structure
+  //         newFilters = {
+  //           ...prev,
+  //           [villaType]: {
+  //             params: {
+  //               ...currentParams,
+  //               [key]: value,
+  //             },
+  //           },
+  //         };
+  //       } else if (Array.isArray(currentParams)) {
+  //         // Other villa types use string arrays
+  //         const newParams = value
+  //           ? [...currentParams.filter((p) => p !== key), key]
+  //           : currentParams.filter((p) => p !== key);
+
+  //         newFilters = {
+  //           ...prev,
+  //           [villaType]: { params: newParams },
+  //         };
+  //       } else {
+  //         newFilters = prev;
+  //       }
+
+  //       // Restore scroll position after state update
+  //       requestAnimationFrame(() => {
+  //         if (scrollContainerRef.current) {
+  //           scrollContainerRef.current.scrollTop = scrollPosition;
+  //         }
+  //       });
+
+  //       return newFilters;
+  //     });
+  //   },
+  //   []
+  // );
 
   const applyFilters = useCallback(() => {
     setFilters(draftFilters);

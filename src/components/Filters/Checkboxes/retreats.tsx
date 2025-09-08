@@ -4,25 +4,26 @@ import { useFilterContext } from "../context";
 
 type Props = {
   testid?: string;
-  key: string;
+  checkKey: string;
   label: string;
 };
 
-const RetreatsCheckbox = ({ key, label }: Props) => {
+const RetreatsCheckbox = ({ checkKey, label }: Props) => {
   const { draftFilters, updateDraftVillaTypeFilter } = useFilterContext();
+  const isChecked = Boolean(
+    (draftFilters.retreats_villa as any)?.params?.[checkKey]
+  );
 
   return (
-    <div key={key} className="flex items-center space-x-2">
+    <div className="flex items-center space-x-2">
       <Checkbox
-        id={`retreats_${key}`}
-        checked={
-          (draftFilters.retreats_villa as any)?.params?.includes(key) || false
-        }
+        id={`retreats_${checkKey}`}
+        checked={isChecked}
         onCheckedChange={(checked) =>
-          updateDraftVillaTypeFilter("retreats_villa", key, checked)
+          updateDraftVillaTypeFilter("retreats_villa", checkKey, checked)
         }
       />
-      <Label htmlFor={`retreats_${key}`} className="text-sm">
+      <Label htmlFor={`retreats_${checkKey}`} className="text-sm">
         {label}
       </Label>
     </div>

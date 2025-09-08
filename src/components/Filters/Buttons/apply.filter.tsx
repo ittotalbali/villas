@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
 import { useFilterContext } from "../context";
-import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
 type Props = {
@@ -11,21 +10,36 @@ type Props = {
 
 const ApplyFilterButton = ({ label, className }: Props) => {
   const { applyFilters, getDraftActiveFilterCount } = useFilterContext();
+
   return (
-    <Button
-      onClick={applyFilters}
-      className={cn(
-        "w-full sm:w-auto order-1 sm:order-2 border min-h-[42px] border-gray-300",
-        className
-      )}
-    >
-      {label}
+    <div className="relative inline-block">
+      <Button
+        onClick={applyFilters}
+        className={cn(
+          "w-full sm:w-auto  border min-h-[42px] border-gray-300",
+          className
+        )}
+      >
+        {label}
+      </Button>
+
+      {/* Floating notification badge */}
       {getDraftActiveFilterCount > 0 && (
-        <Badge variant="secondary" className="ml-2">
-          {getDraftActiveFilterCount}
-        </Badge>
+        <div
+          className={cn(
+            "absolute -top-2 -right-2 z-10",
+            "min-w-5 h-5 px-1.5",
+            "flex items-center justify-center",
+            "bg-red-500 text-white text-xs font-semibold",
+            "rounded-full ",
+            "shadow-sm",
+            "animate-in zoom-in-0 duration-200"
+          )}
+        >
+          {getDraftActiveFilterCount > 99 ? "99+" : getDraftActiveFilterCount}
+        </div>
       )}
-    </Button>
+    </div>
   );
 };
 

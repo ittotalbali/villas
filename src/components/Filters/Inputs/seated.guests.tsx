@@ -14,6 +14,7 @@ const SeatedGuestsInput = ({}: Props) => {
       <Input
         type="number"
         placeholder="Number of seated guests"
+        className="border-gray-300"
         value={(draftFilters.wedding_villa as any)?.params?.seated_guests || ""}
         onChange={(e) =>
           updateDraftVillaTypeFilter(

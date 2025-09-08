@@ -12,6 +12,7 @@ const ActionButton = ({}: Props) => {
       <ClearAllFilterButton label="Clear All" />
       <div className="flex flex-col sm:flex-row gap-3 sm:space-x-3 sm:gap-0">
         <CancelButton label="Cancel" />
+
         <ApplyFilterButton label="Apply Filters" />
       </div>
     </div>

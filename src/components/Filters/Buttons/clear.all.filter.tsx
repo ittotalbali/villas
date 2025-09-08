@@ -1,12 +1,14 @@
 import { Button } from "@/components/ui/button";
 import { useFilterContext } from "../context";
+import { cn } from "@/lib/utils";
 
 type Props = {
   testid?: string;
   label: string;
+  className?: string;
 };
 
-const ClearAllFilterButton = ({ label }: Props) => {
+const ClearAllFilterButton = ({ label, className }: Props) => {
   const { clearAllDraftFilters, getDraftActiveFilterCount } =
     useFilterContext();
 
@@ -15,7 +17,10 @@ const ClearAllFilterButton = ({ label }: Props) => {
       variant="outline"
       onClick={clearAllDraftFilters}
       disabled={getDraftActiveFilterCount === 0}
-      className="w-full sm:w-auto"
+      className={cn(
+        "w-full sm:w-auto border min-h-[42px] border-gray-300",
+        className
+      )}
     >
       {label}
     </Button>

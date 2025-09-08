@@ -25,7 +25,7 @@ const BathroomSelects = ({}: Props) => {
           updateDraftFilter("bathroom", value ? parseInt(value) : undefined)
         }
       >
-        <SelectTrigger>
+        <SelectTrigger className="border-gray-300">
           <Bath className="mr-2 h-4 w-4" />
           <SelectValue placeholder="Select" />
         </SelectTrigger>

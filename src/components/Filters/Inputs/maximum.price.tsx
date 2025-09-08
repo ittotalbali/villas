@@ -16,6 +16,7 @@ const MaximumPriceInput = ({}: Props) => {
       <Input
         id="price_max"
         type="number"
+        className="border-gray-300"
         placeholder="Max price"
         value={draftFilters.price_max || ""}
         onChange={(e) =>

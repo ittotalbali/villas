@@ -24,7 +24,7 @@ const TypeOfAccomodationSelects = ({}: Props) => {
           updateDraftFilter("type_accommodation", value || undefined)
         }
       >
-        <SelectTrigger>
+        <SelectTrigger className="border-gray-300">
           <SelectValue placeholder="Select Type" />
         </SelectTrigger>
         <SelectContent className="max-h-60 overflow-y-auto z-50 bg-white">

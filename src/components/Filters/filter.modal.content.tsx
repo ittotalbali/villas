@@ -23,11 +23,11 @@ const FilterModalContent = ({}: Props) => {
         <FilterButton />
       </DialogTrigger>
       <DialogContent
-        className="w-[95vw] max-w-5xl h-[95vh] max-h-[95vh] z-[1000] flex flex-col p-0 bg-white"
+        className="w-[95vw] max-w-5xl h-[95vh] max-h-[95vh] z-[1000] flex flex-col p-0 bg-white border-gray-300"
         style={{ zIndex: 50 }}
         onOpenAutoFocus={(e) => e.preventDefault()}
       >
-        <DialogHeader className="px-4 pt-4 pb-2 sm:px-6 sm:pt-6 sm:pb-4">
+        <DialogHeader className="px-4 pt-4 pb-2 sm:px-6 sm:pt-6 sm:pb-4 border-b border-b-gray-300">
           <DialogTitle className="flex items-center text-lg sm:text-xl">
             <Home className="mr-2 h-5 w-5" />
             Filter Villas
