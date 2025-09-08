@@ -13,6 +13,44 @@ const Pagination = ({}: Props) => {
   const totalPaginationCount = data?.pagination?.total_count
     ? data?.pagination?.total_count
     : 0;
+
+  const getPageNumbers = () => {
+    const pages: (number | string)[] = [];
+    const maxVisiblePages = 5;
+
+    if (totalPages <= maxVisiblePages) {
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      pages.push(1);
+
+      if (currentPage <= 3) {
+        for (let i = 2; i <= 4; i++) {
+          pages.push(i);
+        }
+        pages.push("...");
+        pages.push(totalPages);
+      } else if (currentPage >= totalPages - 2) {
+        pages.push("...");
+        for (let i = totalPages - 3; i <= totalPages; i++) {
+          pages.push(i);
+        }
+      } else {
+        pages.push("...");
+        pages.push(currentPage - 1);
+        pages.push(currentPage);
+        pages.push(currentPage + 1);
+        pages.push("...");
+        pages.push(totalPages);
+      }
+    }
+
+    return pages;
+  };
+
+  const pageNumbers = getPageNumbers();
+
   return (
     <div className="flex items-center justify-between px-4 py-6 border-t border-gray-200 flex-shrink-0">
       <button
@@ -27,23 +65,21 @@ const Pagination = ({}: Props) => {
       </button>
 
       <div className="flex items-center gap-2">
-        {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-          let pageNum;
-          if (totalPages <= 5) {
-            pageNum = i + 1;
-          } else if (currentPage <= 3) {
-            pageNum = i + 1;
-          } else if (currentPage >= totalPages - 2) {
-            pageNum = totalPages - 4 + i;
-          } else {
-            pageNum = currentPage - 2 + i;
+        {pageNumbers.map((page, index) => {
+          if (page === "...") {
+            return (
+              <span key={`ellipsis-${index}`} className="text-sm text-gray-500">
+                ...
+              </span>
+            );
           }
 
+          const pageNum = page as number;
           return (
             <button
               key={pageNum}
               className={cn(
-                "px-3 py-1 rounded-lg text-sm font-medium",
+                "px-3 py-1 rounded-lg text-sm font-medium min-w-[2.5rem]",
                 currentPage === pageNum
                   ? "bg-pink-500 text-white"
                   : "bg-white border border-gray-300"
@@ -54,18 +90,6 @@ const Pagination = ({}: Props) => {
             </button>
           );
         })}
-
-        {totalPages > 5 && currentPage < totalPages - 2 && (
-          <>
-            <span className="text-sm text-gray-500">...</span>
-            <button
-              className="px-3 py-1 bg-white border border-gray-300 rounded-lg text-sm font-medium"
-              onClick={() => setCurrentPage(totalPages)}
-            >
-              {totalPages}
-            </button>
-          </>
-        )}
       </div>
 
       <button
