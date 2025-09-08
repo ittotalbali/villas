@@ -3,6 +3,55 @@
   height: 100% !important;
 }
 
+/* Simple marker styles - let SVG handle the animation */
+.marker-icon-bedroom {
+  transition: none; /* Remove CSS transitions to let SVG animations work */
+  transform-origin: center bottom;
+  overflow: visible !important; /* Prevent clipping during animation */
+}
+
+.marker-icon-bedroom.active {
+  z-index: 1000 !important; /* Ensure active markers appear above others */
+  overflow: visible !important; /* Ensure bouncing doesn't get clipped */
+}
+
+/* Ensure Leaflet markers don't clip the animation */
+.leaflet-marker-icon {
+  overflow: visible !important;
+}
+
+/* Make sure the marker pane allows overflow */
+.leaflet-marker-pane {
+  overflow: visible !important;
+}
+
+/* Smooth transitions for price markers (different type) */
+.marker-icon rect {
+  transition: fill 0.3s ease-out, stroke 0.3s ease-out;
+}
+.marker-icon text {
+  transition: fill 0.3s ease-out;
+}
+.marker-icon.active {
+  transform: scale(1.02);
+  transform-origin: center;
+  transition: transform 0.3s ease-out;
+}
+
+/* Ensure no clipping and proper stacking */
+.map-container,
+.map-container > div {
+  position: relative;
+  z-index: 0;
+  overflow: visible;
+}
+
+/* Make sure active markers appear above others */
+.leaflet-marker-icon.marker-icon-bedroom.active {
+  z-index: 1000 !important;
+}
+
+/* Rest of your existing CSS... */
 @keyframes dot-pulse {
   0%,
   100% {
@@ -31,66 +80,19 @@
   animation-delay: 0.4s;
 }
 
-/* Ensure no clipping */
-.map-container,
-.map-container > div {
-  position: relative;
-  z-index: 0;
-  overflow: visible;
-}
-
-/* Smooth transitions for price markers */
-.marker-icon rect {
-  transition: fill 0.3s ease-out, stroke 0.3s ease-out;
-}
-.marker-icon text {
-  transition: fill 0.3s ease-out;
-}
-.marker-icon.active {
-  transform: scale(1.02);
-  transform-origin: center;
-  transition: transform 0.3s ease-out;
-}
-
-/* Jumping animation for bedroom markers */
-@keyframes jump {
-  0%,
-  100% {
-    transform: translateY(0) scale(1.1);
-  }
-  50% {
-    transform: translateY(-5px) scale(1.1);
-  }
-}
-
-/* Smooth transitions and jumping animation for bedroom markers */
-.marker-icon-bedroom {
-  transition: transform 0.3s ease-out;
-}
-.marker-icon-bedroom.active {
-  transform: scale(1.1);
-  transform-origin: center;
-  animation: jump 0.6s ease-in-out infinite;
-}
-
-/* Sticky map positioning */
 .sticky {
   position: sticky !important;
 }
 
-/* Enhanced responsive desktop layout */
 @media (min-width: 1024px) {
-  /* Ensure the layout adapts smoothly to different screen sizes */
   .desktop-layout {
     transition: all 0.3s ease-out;
   }
 
-  /* Fixed 3-column grid for all desktop sizes - just like Airbnb */
   .villa-grid {
     grid-template-columns: repeat(3, 1fr) !important;
   }
 
-  /* Adjust gaps based on available space */
   @media (min-width: 1024px) and (max-width: 1280px) {
     .villa-grid {
       gap: 1rem !important;
@@ -110,14 +112,12 @@
   }
 }
 
-/* Ensure proper scrolling in mobile drawer */
 .vaul-drawer-content {
   display: flex;
   flex-direction: column;
   min-height: 0;
 }
 
-/* Fix for mobile viewport height */
 @media (max-width: 1024px) {
   .h-full {
     height: calc(
@@ -126,23 +126,19 @@
   }
 }
 
-/* Ensure body allows scrolling */
 body {
   overflow-x: hidden;
 }
 
-/* Map expansion animation */
 .map-container {
   transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Villa card hover effects */
 .villa-item:hover {
   transform: translateY(-2px);
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
 }
 
-/* Responsive container max-width */
 @media (min-width: 1024px) {
   .main-container {
     max-width: 100%;

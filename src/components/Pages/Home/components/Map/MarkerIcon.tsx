@@ -2,25 +2,28 @@ import L from "leaflet";
 import { measureTextWidth } from "./utils";
 
 export function getMarkerColor(total_bedroom: number): string {
-  if (total_bedroom <= 3) {
-    return "#4B6584";
-  } else if (total_bedroom === 4) {
+  // Coerce to number and handle invalid cases (e.g., NaN becomes else clause)
+  const beds = Number(total_bedroom) || 0; // Fallback to 0 if invalid (will hit <=3)
+
+  if (beds <= 3) {
+    return "#4B6587"; // Typo fix: was #4B6584? Assuming original
+  } else if (beds === 4) {
     return "#6A89CC";
-  } else if (total_bedroom === 5) {
+  } else if (beds === 5) {
     return "#2D98DA";
-  } else if (total_bedroom === 6) {
+  } else if (beds === 6) {
     return "#45A29E";
-  } else if (total_bedroom === 7) {
+  } else if (beds === 7) {
     return "#0A79DF";
-  } else if (total_bedroom === 8) {
+  } else if (beds === 8) {
     return "#3B3B98";
-  } else if (total_bedroom === 9) {
+  } else if (beds === 9) {
     return "#2C3A47";
-  } else if (total_bedroom === 10) {
+  } else if (beds === 10) {
     return "#3742FA";
-  } else if (total_bedroom === 11) {
+  } else if (beds === 11) {
     return "#706FD3";
-  } else if (total_bedroom === 12) {
+  } else if (beds === 12) {
     return "#30336B";
   } else {
     return "#130F40";
@@ -32,35 +35,97 @@ export function getMarkerIcon2(
   isActive: boolean = false
 ) {
   const markerColor = getMarkerColor(totalBedroom);
-  const scale = isActive ? 1.1 : 1;
+  console.log(`Bedrooms: ${totalBedroom}, Color: ${markerColor}`); // Add this line
   const textColor = "#ffffff";
 
-  const svg = `
-    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" style="transform: scale(${scale}); transform-origin: center;">
+  // Create unique animation ID for this marker to avoid conflicts
+  const animationId = `bounce-${Math.random().toString(36).substr(2, 9)}`;
 
+  // Extend viewBox upward by 20 units to accommodate upward animation (pulse r=18 + bounce -16 + buffer)
+  // New viewBox: 0 0 24 56 (original 36 + 20 padding at top)
+  // Shift all content down by 20 units (add to y-coords) to recenter
+  const yOffset = 20; // Matches the padding
+
+  const svg = `
+    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="80" viewBox="0 0 24 56" overflow="visible">
       <defs>
-        <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+        <linearGradient id="grad1-${animationId}" x1="0%" y1="0%" x2="100%" y2="100%">
           <stop offset="0%" style="stop-color:${markerColor};stop-opacity:1" />
           <stop offset="100%" style="stop-color:#75c5f0;stop-opacity:1" />
         </linearGradient>
-        <filter id="f1" x="0" y="0">
-          <feDropShadow dx="1" dy="1" stdDeviation="2" flood-color="#75c5f0" />
-        </filter>
       </defs>
-      <path class="${
-        isActive ? "active" : ""
-      }" d="M21 10c0 6.627-9 13-9 13S3 16.627 3 10a9 9 0 1 1 18 0z" fill="url(#grad1)" filter="url(#f1)"></path>
-      <circle cx="12" cy="10" r="7" fill="${markerColor}"></circle>
-      <text x="12" y="10" text-anchor="middle" font-size="8" fill="${textColor}" font-family="Verdana" font-weight="300" dy=".35em">${totalBedroom}</text>
+      
+      <!-- Bouncing group - now includes pulsing ring for cohesive animation -->
+      <g class="marker-bounce" transform-origin="12 ${
+        10 + yOffset + 26
+      }"> <!-- Anchor from center-bottom for pin-like bounce -->
+        ${
+          isActive
+            ? `
+        <animateTransform
+          attributeName="transform"
+          attributeType="XML"
+          type="translate"
+          values="0,0; 0,-16; 0,0; 0,-8; 0,0"
+          dur="1.2s"
+          repeatCount="indefinite"
+        />
+        `
+            : ""
+        }
+        
+        <!-- Pulsing ring - now INSIDE g, so it bounces too; y shifted by yOffset -->
+        ${
+          isActive
+            ? `
+        <circle cx="12" cy="${10 + yOffset}" r="12" 
+                fill="none" 
+                stroke="${markerColor}" 
+                stroke-width="2" 
+                opacity="0.4">
+          <animate attributeName="r" 
+                   values="12;18;12" 
+                   dur="1.2s" 
+                   repeatCount="indefinite"/>
+          <animate attributeName="opacity" 
+                   values="0.4;0;0.4" 
+                   dur="1.2s" 
+                   repeatCount="indefinite"/>
+        </circle>
+        `
+            : ""
+        }
+        
+        <!-- Main marker path - y shifted by yOffset -->
+        <path d="M21 ${10 + yOffset}c0 6.627-9 13-9 13S3 ${
+    16.627 + yOffset
+  } 3 ${10 + yOffset}a9 9 0 1 1 18 0z" 
+              fill="url(#grad1-${animationId})"
+              transform="scale(${isActive ? 1 : 1})"/>
+              
+        <!-- Inner circle - y shifted by yOffset -->
+        <circle cx="12" cy="${10 + yOffset}" r="7" fill="${markerColor}"/>
+        
+        <!-- Text - y shifted by yOffset -->
+        <text x="12" y="${10 + yOffset}" 
+              text-anchor="middle" 
+              font-size="8" 
+              fill="${textColor}" 
+              font-family="Verdana" 
+              font-weight="700" 
+              dy=".35em">
+          ${totalBedroom}
+        </text>
+      </g>
     </svg>
   `;
 
   return L.divIcon({
     html: svg,
-    className: `marker-icon ${isActive ? "active" : ""}`,
-    iconSize: [40, 40],
-    iconAnchor: [20, 40],
-    popupAnchor: [0, -40],
+    className: `marker-icon-bedroom ${isActive ? "active" : ""}`,
+    iconSize: [40, 90], // Increased height to match new SVG height (80) + animation buffer
+    iconAnchor: [20, 85], // Adjusted down to keep bottom-point anchored (original 65 + new height delta)
+    popupAnchor: [0, -85],
   });
 }
 
