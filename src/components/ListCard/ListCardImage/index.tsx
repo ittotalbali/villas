@@ -1,5 +1,4 @@
 import { useListCardContext } from "../context";
-import HeartButton from "./heart-button";
 import NavigationArrows from "./navigation-arrows";
 import { ListCardImageContextProvider } from "./context";
 import Dots from "./dots";
@@ -19,8 +18,7 @@ const ListCardImage = () => {
     <ListCardImageContextProvider totalImages={totalImages}>
       <div
         className={cn(
-          "relative w-full aspect-square overflow-hidden  mb-3 group",
-          forMap ? "rounded-t-xl" : "rounded-xl"
+          "relative w-full aspect-square overflow-hidden rounded-t-xl   group"
         )}
       >
         {totalImages > 0 ? (
@@ -34,7 +32,7 @@ const ListCardImage = () => {
               </>
             )}
 
-            {forMap ? <ActionButton /> : <HeartButton />}
+            {forMap && <ActionButton />}
 
             {shouldShowDots && <Dots />}
           </div>

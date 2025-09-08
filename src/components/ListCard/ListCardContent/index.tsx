@@ -13,7 +13,7 @@ type props = {
 const ListCardContent = ({}: props) => {
   const { forMap } = useListCardContext();
   return (
-    <div className={cn("flex flex-col gap-1", forMap && "p-2")}>
+    <div className={cn("flex flex-col gap-1.5 px-2 py-3", forMap && "p-2")}>
       <Head />
 
       <Name />
