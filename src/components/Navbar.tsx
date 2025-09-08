@@ -5,7 +5,8 @@ import Filters from "./Navbar/filters";
 
 const Navbar = () => {
   return (
-    <div className="w-full">
+    <div className="w-full ">
+      {/* 1st layer */}
       <nav className="w-full z-[10] bg-white border-b border-gray-200 py-3 px-5 lg:px-6 flex flex-wrap items-center justify-between">
         {/* Headers */}
         <div className="flex justify-between gap-3 w-full lg:flex-row lg:items-center">
@@ -17,7 +18,8 @@ const Navbar = () => {
           </div>
         </div>
       </nav>
-      <nav className="w-full z-[10] bg-white border-b border-gray-200 py-3 px-5 lg:px-6 flex flex-wrap items-center justify-between">
+      {/* 2nd layer */}
+      <nav className="w-full z-[10] bg-white border-b border-gray-200 py-3 px-5 lg:px-6 hidden lg:flex flex-wrap items-center justify-between ">
         {/* Filters */}
         <div className="flex flex-col gap-3 w-full lg:flex-row lg:items-center">
           <FilterContextProvider>

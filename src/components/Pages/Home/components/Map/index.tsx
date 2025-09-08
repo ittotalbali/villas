@@ -94,7 +94,8 @@ const MapContent = ({
     <>
       <TileLayer
         className="w-full"
-        attribution='&copy; <a href="https://totalbali.com/">Total Bali</a>'
+        attribution='&copy; <a href="https://totalbali.com/">Total Bali</a> | &copy; Google'
+        // url="https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}"
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
       <MapEvents

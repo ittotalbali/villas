@@ -2,11 +2,10 @@ import L from "leaflet";
 import { measureTextWidth } from "./utils";
 
 export function getMarkerColor(total_bedroom: number): string {
-  // Coerce to number and handle invalid cases (e.g., NaN becomes else clause)
-  const beds = Number(total_bedroom) || 0; // Fallback to 0 if invalid (will hit <=3)
+  const beds = Number(total_bedroom) || 0;
 
   if (beds <= 3) {
-    return "#4B6587"; // Typo fix: was #4B6584? Assuming original
+    return "#4B6587";
   } else if (beds === 4) {
     return "#6A89CC";
   } else if (beds === 5) {
@@ -35,19 +34,15 @@ export function getMarkerIcon2(
   isActive: boolean = false
 ) {
   const markerColor = getMarkerColor(totalBedroom);
-  console.log(`Bedrooms: ${totalBedroom}, Color: ${markerColor}`); // Add this line
   const textColor = "#ffffff";
 
-  // Create unique animation ID for this marker to avoid conflicts
   const animationId = `bounce-${Math.random().toString(36).substr(2, 9)}`;
-
-  // Extend viewBox upward by 20 units to accommodate upward animation (pulse r=18 + bounce -16 + buffer)
-  // New viewBox: 0 0 24 56 (original 36 + 20 padding at top)
-  // Shift all content down by 20 units (add to y-coords) to recenter
-  const yOffset = 20; // Matches the padding
+  const yOffset = 20;
 
   const svg = `
     <svg xmlns="http://www.w3.org/2000/svg" width="40" height="80" viewBox="0 0 24 56" overflow="visible">
+
+      
       <defs>
         <linearGradient id="grad1-${animationId}" x1="0%" y1="0%" x2="100%" y2="100%">
           <stop offset="0%" style="stop-color:${markerColor};stop-opacity:1" />
@@ -55,10 +50,7 @@ export function getMarkerIcon2(
         </linearGradient>
       </defs>
       
-      <!-- Bouncing group - now includes pulsing ring for cohesive animation -->
-      <g class="marker-bounce" transform-origin="12 ${
-        10 + yOffset + 26
-      }"> <!-- Anchor from center-bottom for pin-like bounce -->
+      <g class="marker-bounce" transform-origin="12 ${10 + yOffset + 26}">
         ${
           isActive
             ? `
@@ -74,7 +66,6 @@ export function getMarkerIcon2(
             : ""
         }
         
-        <!-- Pulsing ring - now INSIDE g, so it bounces too; y shifted by yOffset -->
         ${
           isActive
             ? `
@@ -96,17 +87,15 @@ export function getMarkerIcon2(
             : ""
         }
         
-        <!-- Main marker path - y shifted by yOffset -->
+        <!-- Main marker path -->
         <path d="M21 ${10 + yOffset}c0 6.627-9 13-9 13S3 ${
     16.627 + yOffset
   } 3 ${10 + yOffset}a9 9 0 1 1 18 0z" 
               fill="url(#grad1-${animationId})"
               transform="scale(${isActive ? 1 : 1})"/>
               
-        <!-- Inner circle - y shifted by yOffset -->
         <circle cx="12" cy="${10 + yOffset}" r="7" fill="${markerColor}"/>
         
-        <!-- Text - y shifted by yOffset -->
         <text x="12" y="${10 + yOffset}" 
               text-anchor="middle" 
               font-size="8" 
@@ -123,9 +112,10 @@ export function getMarkerIcon2(
   return L.divIcon({
     html: svg,
     className: `marker-icon-bedroom ${isActive ? "active" : ""}`,
-    iconSize: [40, 90], // Increased height to match new SVG height (80) + animation buffer
-    iconAnchor: [20, 85], // Adjusted down to keep bottom-point anchored (original 65 + new height delta)
-    popupAnchor: [0, -85],
+    iconSize: [40, 90],
+    // Try different anchor points:
+    iconAnchor: [20, 56], // Try this instead of [20, 85]
+    popupAnchor: [0, -56],
   });
 }
 
