@@ -3,6 +3,7 @@ import { Menu, X } from "lucide-react";
 import { default as NavbarCurrency } from "../currency";
 import Link from "./link";
 import { default as NavbarImage } from "../image";
+import MobileFilters from "../filters/mobile.filter";
 
 type Props = {
   testid?: string;
@@ -18,7 +19,8 @@ const Navigations = ({}: Props) => {
   return (
     <div className="relative w-full flex items-center justify-end">
       {/* Hamburger Button for Mobile */}
-      <div className="flex justify-end lg:hidden">
+      <div className="flex justify-end lg:hidden w-full">
+        <MobileFilters />
         <button
           onClick={toggleMenu}
           className="p-2 focus:outline-none"

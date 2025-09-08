@@ -6,13 +6,13 @@ import DatePicker from "@/components/Filters/components/date.picker";
 import { useFilterContext } from "@/components/Filters/context";
 import SearchInput from "@/components/Filters/Inputs/search";
 import BedroomSelect from "@/components/Filters/Selects/bedroom";
-import FilterModalContent from "@/components/Filters/filter.modal.content";
+import FilterModalDesktop from "@/components/Filters/Modals/desktop";
 
 type Props = {
   testid?: string;
 };
 
-const Filters = ({}: Props) => {
+const DesktopFilters = ({}: Props) => {
   const {
     checkInDate,
     checkOutDate,
@@ -70,7 +70,7 @@ const Filters = ({}: Props) => {
             />
           </div>
           <div className="w-full lg:w-full">
-            <FilterModalContent />
+            <FilterModalDesktop />
           </div>
         </div>
       </div>
@@ -78,4 +78,4 @@ const Filters = ({}: Props) => {
   );
 };
 
-export default Filters;
+export default DesktopFilters;

@@ -141,7 +141,7 @@ const MapContent = ({
 };
 
 const Map = ({ style, villas, className, containerKey }: Props) => {
-  const { zoom, center } = useHomeContext();
+  const { zoom, center, isDesktop } = useHomeContext();
 
   return (
     <MapContainer
@@ -149,6 +149,7 @@ const Map = ({ style, villas, className, containerKey }: Props) => {
       zoom={zoom}
       className={cn("w-full h-full", className)}
       style={style}
+      zoomControl={isDesktop}
     >
       <MapContent villas={villas} containerKey={containerKey} />
     </MapContainer>

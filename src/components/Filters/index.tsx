@@ -1,4 +1,4 @@
-import Content from "./filter.modal.content";
+import Content from "./Modals/desktop";
 import { FilterContextProvider } from "./context";
 
 type Props = {

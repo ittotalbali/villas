@@ -19,7 +19,7 @@ const MapSection = ({}: Props) => {
       <Map
         villas={villas}
         className="w-full h-full"
-        style={{ height: "calc(100vh - 64px)" }}
+        style={{ height: "60%" }}
       />
       {isLoading && (
         <div

@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { useFilterContext } from "../context";
 import { cn } from "@/lib/utils";
+import { useCallback } from "react";
 
 type Props = {
   testid?: string;
@@ -9,13 +10,23 @@ type Props = {
 };
 
 const ClearAllFilterButton = ({ label, className }: Props) => {
-  const { clearAllDraftFilters, getDraftActiveFilterCount } =
-    useFilterContext();
+  const {
+    draftFilters,
+    clearAllDraftFilters,
+    getDraftActiveFilterCount,
+    open,
+    setOpen,
+  } = useFilterContext();
+
+  const handleClick = useCallback(() => {
+    clearAllDraftFilters();
+    setOpen(false);
+  }, [draftFilters, open]);
 
   return (
     <Button
       variant="outline"
-      onClick={clearAllDraftFilters}
+      onClick={handleClick}
       disabled={getDraftActiveFilterCount === 0}
       className={cn(
         "w-full sm:w-auto border min-h-[42px] border-gray-300",

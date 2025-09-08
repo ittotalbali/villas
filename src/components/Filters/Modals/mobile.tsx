@@ -5,18 +5,19 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "../ui/dialog";
-import FilterButton from "./Buttons/filter";
-import { useFilterContext } from "./context";
-import FilterContent from "./FilterContent";
-import ActionButton from "./action.button";
+} from "../../ui/dialog";
+import FilterButton from "../Buttons/filter";
+import { useFilterContext } from "../context";
+import FilterContent from "../FilterModalContent/mobile";
+import ActionButton from "../action.button";
 
 type Props = {
   testid?: string;
 };
 
-const FilterModalContent = ({}: Props) => {
+const FilterModalMobile = ({}: Props) => {
   const { open, setOpen } = useFilterContext();
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
@@ -43,4 +44,4 @@ const FilterModalContent = ({}: Props) => {
   );
 };
 
-export default FilterModalContent;
+export default FilterModalMobile;

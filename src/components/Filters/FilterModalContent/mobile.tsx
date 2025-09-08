@@ -6,12 +6,16 @@ import PropertyOptions from "../PropertyOptions";
 import TypeOfAccomodationSelects from "../Selects/type.of.accomodation";
 import BathroomSelects from "../Selects/bathroom";
 import { useFilterContext } from "../context";
+import SearchInput from "../Inputs/search";
+import AreaCombobox from "../Comboboxes/area";
+import LocationCombobox from "../Comboboxes/location";
+import SubLocationCombobox from "../Comboboxes/sub-location";
 
 type Props = {
   testid?: string;
 };
 
-const FilterContent = ({}: Props) => {
+const FilterContentMobile = ({}: Props) => {
   const { scrollContainerRef } = useFilterContext();
   return (
     <div
@@ -19,6 +23,14 @@ const FilterContent = ({}: Props) => {
       className="relative flex-1 overflow-y-auto px-4 pb-4 sm:px-6 sm:pb-6"
     >
       <div className="space-y-6">
+        <SearchInput />
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <AreaCombobox />
+          <LocationCombobox />
+          <SubLocationCombobox />
+        </div>
+
         {/* Basic Filters Row */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {/* Type of Accommodation */}
@@ -54,4 +66,4 @@ const FilterContent = ({}: Props) => {
   );
 };
 
-export default FilterContent;
+export default FilterContentMobile;

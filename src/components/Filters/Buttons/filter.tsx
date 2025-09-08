@@ -18,7 +18,7 @@ const FilterButton = forwardRef<HTMLButtonElement, Props>(
         ref={ref}
         {...props}
         variant="outline"
-        className="relative rounded-full flex items-center justify-center p-0 border border-gray-300 min-h-[42px] w-full"
+        className="relative rounded-md flex items-center justify-center p-0 border border-gray-300 min-h-[42px] w-full"
         data-testid={testid}
       >
         <SlidersHorizontal className="h-5 w-5" />
