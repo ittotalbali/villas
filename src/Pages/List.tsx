@@ -1,4 +1,4 @@
-import Navbar from "@/components/Navbar";
+import Navbar from "@/components/Pages/List/components/Navbar";
 import "@/components/Pages/Home/home.page.css";
 import { HomeContextProvider } from "@/components/Pages/Home/contexts/context";
 import { default as Content } from "@/components/Pages/List";

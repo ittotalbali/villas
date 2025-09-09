@@ -1,6 +1,6 @@
 import "leaflet/dist/leaflet.css";
 import "@/components/Pages/Home/home.page.css";
-import Navbar from "@/components/Navbar";
+import Navbar from "@/components/Pages/Home/components/Navbar";
 import { HomeContextProvider } from "@/components/Pages/Home/contexts/context";
 import { default as Content } from "@/components/Pages/Home";
 

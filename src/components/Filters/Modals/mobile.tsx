@@ -15,9 +15,10 @@ import { Badge } from "@/components/ui/badge";
 
 type Props = {
   testid?: string;
+  triggerButtonLabel?: string;
 };
 
-const FilterModalMobile = ({}: Props) => {
+const FilterModalMobile = ({ triggerButtonLabel = "" }: Props) => {
   const { open, setOpen } = useFilterContext();
   const { getActiveFilterCount } = useVillaFilterStore();
   const count = getActiveFilterCount();
@@ -30,6 +31,7 @@ const FilterModalMobile = ({}: Props) => {
           className="relative rounded-md flex items-center justify-center p-0 border border-gray-300 min-h-[42px] "
         >
           <SlidersHorizontal className="h-6 w-6" />
+          {triggerButtonLabel}
           {count > 0 && (
             <Badge
               variant="destructive"

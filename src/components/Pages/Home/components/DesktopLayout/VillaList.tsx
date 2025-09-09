@@ -5,6 +5,8 @@ import ListCard from "@/components/ListCard";
 import ListCardSkeleton from "@/components/ListCard/skeleton";
 import { useHomeContext } from "../../contexts/context";
 import { generateVillaSlug } from "@/lib/utils";
+import MobileFilters from "@/components/Navbar/filters/mobile.filter";
+import { FilterContextProvider } from "@/components/Filters/context";
 
 type Props = {
   testid?: string;
@@ -21,7 +23,7 @@ const VillaListSection = ({}: Props) => {
 
   return (
     <div
-      className="flex-1 min-w-0 pr-4 lg:pr-6"
+      className="flex-1 min-w-0 pr-4 lg:pr-2"
       style={{
         // At 100% zoom: ~60% of screen width
         // As screen gets larger: list maintains reasonable max-width while map expands
@@ -30,11 +32,17 @@ const VillaListSection = ({}: Props) => {
       }}
     >
       <div className="flex flex-col h-full">
-        <div className="p-6  border-gray-200 flex-shrink-0">
+        <div className="p-6  border-gray-200 flex w-full justify-between">
           {/* <h2 className="m-0 text-2xl font-semibold">Villas in Bali</h2> */}
-          <span className="m-0 text-sm text-gray-600 font-medium flex gap-1">
+          <span className="m-0 text-sm text-gray-600 font-medium flex gap-1 my-auto">
             <p className="font-bold">{totalVillas}</p> <p>villas available</p>
           </span>
+
+          <div className="hidden lg:flex">
+            <FilterContextProvider>
+              <MobileFilters triggerButtonLabel="Filters" />
+            </FilterContextProvider>
+          </div>
         </div>
         <div className="flex-1 overflow-y-auto p-4 min-h-0">
           <div

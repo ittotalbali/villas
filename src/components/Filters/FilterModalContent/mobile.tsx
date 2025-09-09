@@ -10,6 +10,7 @@ import SearchInput from "../Inputs/search";
 import AreaCombobox from "../Comboboxes/area";
 import LocationCombobox from "../Comboboxes/location";
 import SubLocationCombobox from "../Comboboxes/sub-location";
+import DateRangePicker from "../DateRangePicker";
 
 type Props = {
   testid?: string;
@@ -48,6 +49,8 @@ const FilterContentMobile = ({}: Props) => {
 
         {/* Price Range */}
         <PriceRange />
+
+        <DateRangePicker />
 
         {/* Date Range with shadcn/ui Date Picker */}
         {/* <DateRangePicker /> */}

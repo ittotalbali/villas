@@ -12,7 +12,7 @@ const Image = ({ className }: Props) => {
         <img
           src="https://www.totalbali.com/images/logoTb.PNG"
           alt="Logo"
-          className={cn("h-12 lg:h-16 mr-5", className)}
+          className={cn("h-12 lg:h-14 mr-5", className)}
         />
       </a>
       {/* <VillaFilterModal /> */}
