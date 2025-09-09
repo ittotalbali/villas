@@ -22,7 +22,7 @@ export default function CurrencyComboBox({
   className = "",
 }: CurrencyComboBoxProps) {
   const { filters, setFilters } = useVillaFilterStore();
-  const [_, setSearchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [isOpen, setIsOpen] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
 
@@ -107,15 +107,21 @@ export default function CurrencyComboBox({
 
   const handleClear = (e: React.MouseEvent) => {
     e.stopPropagation();
-    onValueChange?.(undefined);
-    setFilters({ ...filters, curs_exchanges_id: undefined });
-    setSearchParams((prev) => {
-      const next = new URLSearchParams(prev);
+    onValueChange?.(7);
 
-      next.delete("curs_exchanges_id");
+    if (filters.curs_exchanges_id) {
+      setFilters({ ...filters, curs_exchanges_id: 7 });
+    }
 
-      return next;
-    });
+    if (searchParams.get("curs_exchanges_id")) {
+      setSearchParams((prev) => {
+        const next = new URLSearchParams(prev);
+
+        next.set("curs_exchanges_id", "7");
+
+        return next;
+      });
+    }
   };
 
   const toggleOpen = () => {
@@ -149,7 +155,7 @@ export default function CurrencyComboBox({
           {selectedCurrency ? selectedCurrency.code : placeholder}
         </span>
         <div className="flex items-center space-x-1 flex-none">
-          {selectedCurrency && !disabled && (
+          {selectedCurrency && !disabled && filters.curs_exchanges_id != 7 && (
             <button
               onClick={handleClear}
               className="p-1 hover:bg-gray-100 rounded"

@@ -8,19 +8,29 @@ import {
 } from "@/components/ui/select";
 import { Bath } from "lucide-react";
 import { useFilterContext } from "../context";
+import { useSearchParams } from "react-router-dom";
+import { useVillaFilterStore } from "@/lib/store/filterStore";
 
 type Props = {
   testid?: string;
 };
 
 const BathroomSelects = ({}: Props) => {
+  const [searchParams] = useSearchParams();
+  const { filters } = useVillaFilterStore();
   const { draftFilters, updateDraftFilter } = useFilterContext();
+
+  const currentValue =
+    draftFilters.bathroom?.toString() ??
+    searchParams.get("bathroom") ??
+    filters.bathroom?.toString() ??
+    "";
 
   return (
     <div className="space-y-2">
       <Label className="text-sm font-medium">Bathrooms</Label>
       <Select
-        value={draftFilters.bathroom?.toString() || ""}
+        value={currentValue}
         onValueChange={(value) =>
           updateDraftFilter("bathroom", value ? parseInt(value) : undefined)
         }

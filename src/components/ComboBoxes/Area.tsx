@@ -1,8 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Check, ChevronsUpDown, Loader2, X } from "lucide-react";
 import { useInfiniteAreas } from "@/lib/api/hooks/areas";
-import { useSearchParams } from "react-router-dom";
-import { useVillaFilterStore } from "@/lib/store/filterStore";
 
 interface AreaComboBoxProps {
   value?: number;
@@ -28,8 +26,6 @@ export default function CustomAreaComboBox({
   baseParams = {},
   searchDebounce = 300,
 }: AreaComboBoxProps) {
-  // const [searchParams, setSearchParams] = useSearchParams();
-  // const { filters, setFilters } = useVillaFilterStore();
   const [isOpen, setIsOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
@@ -40,8 +36,6 @@ export default function CustomAreaComboBox({
   const listRef = useRef<HTMLDivElement>(null);
   const observerRef = useRef<IntersectionObserver | null>(null);
 
-  // Use store value if propValue is undefined
-  // const value = propValue !== undefined ? propValue : filters.area_id;
   const value = propValue;
 
   // Debounce search
