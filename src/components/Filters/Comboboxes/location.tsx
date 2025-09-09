@@ -3,6 +3,7 @@ import { useFilterContext } from "../context";
 import LocationComboBox from "@/components/ComboBoxes/Location";
 import { useVillaFilterStore } from "@/lib/store/filterStore";
 import { useSearchParams } from "react-router-dom";
+import { useCallback } from "react";
 
 type Props = {
   testid?: string;
@@ -23,7 +24,7 @@ const LocationCombobox = ({ withLabel = true, className }: Props) => {
     filters.location_id ??
     undefined;
 
-  const handleClear = (e: React.MouseEvent) => {
+  const handleClear = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
 
     if (draftFilters.location_id) {
@@ -58,7 +59,7 @@ const LocationCombobox = ({ withLabel = true, className }: Props) => {
         return next;
       });
     }
-  };
+  }, [draftFilters, filters, searchParams]);
 
   return (
     <div className="space-y-2">

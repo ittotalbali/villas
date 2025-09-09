@@ -13,6 +13,7 @@ interface SubLocationComboBoxProps {
   disabled?: boolean;
   className?: string;
   baseParams?: Omit<SubLocationQueryParams, "page" | "search_param">;
+  handleClear: (e: React.MouseEvent<Element, MouseEvent>) => void;
   searchDebounce?: number;
 }
 
@@ -25,6 +26,7 @@ export default function SubLocationComboBox({
   className = "",
   baseParams = {},
   searchDebounce = 300,
+  handleClear,
 }: SubLocationComboBoxProps) {
   // const { filters, setFilters } = useVillaFilterStore();
   const [isOpen, setIsOpen] = useState(false);
@@ -151,12 +153,6 @@ export default function SubLocationComboBox({
     setIsOpen(false);
     setSearchValue("");
     setHighlightedIndex(-1);
-  };
-
-  const handleClear = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    onValueChange?.(undefined);
-    // setFilters({ ...filters, sub_location_id: undefined });
   };
 
   const toggleOpen = () => {
