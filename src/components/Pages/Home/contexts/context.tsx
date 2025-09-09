@@ -56,7 +56,7 @@ export const HomeContextProvider = ({
   ]);
   const [showCard, setShowCard] = useState(false);
   const [zoom, setZoom] = useState<number>(
-    parseInt(searchParams.get("zoom") ?? "16")
+    parseInt(searchParams.get("zoom") ?? "12")
   );
   const [selectedVilla, setSelectedVilla] = useState<number | null>(null);
   const [hoveredVilla, setHoveredVilla] = useState<number | null>(null);

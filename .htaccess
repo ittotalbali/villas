@@ -1,17 +1,24 @@
 <IfModule mod_rewrite.c>
   Options -MultiViews
   RewriteEngine On
-
-  # Handle PHP project at /villa/property
+  
+  # 1. Bypass PHP project at /villa/property
   RewriteCond %{REQUEST_URI} ^/villa/property/
-  RewriteRule ^ - [L] # Let Apache handle this path normally
-
-  # Handle React app at /villa - send all requests to index.html
-  RewriteCond %{REQUEST_URI} ^/villa/
+  RewriteRule ^ - [L]
+  
+  # 2. Bypass existing files and directories (static assets etc.)
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+  
+  # 3. Rewrite all villa requests to index.html - MORE EXPLICIT PATTERN
+  RewriteCond %{REQUEST_URI} ^/villa(/.*)?$
+  RewriteCond %{REQUEST_URI} !^/villa/index\.html$
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
-  RewriteRule ^villa/.* /villa/index.html [L]
-
-  # Redirect root to /villa if needed
+  RewriteRule ^(.*)$ /villa/index.html [QSA,L]
+  
+  # 4. Redirect only the root `/` to `/villa/`
+  RewriteCond %{REQUEST_URI} ^/$
   RewriteRule ^$ /villa/ [R=301,L]
 </IfModule>

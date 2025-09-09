@@ -251,7 +251,7 @@ export default function VillaFilterModal() {
     setFilters(draftFilters); // Update the Zustand store
     if (draftFilters.lat && draftFilters.lng) {
       setCenter([parseFloat(draftFilters.lat), parseFloat(draftFilters.lng)]);
-      setZoom(12);
+      // setZoom(12);
     }
     setOpen(false);
   }, [draftFilters, setFilters, setCenter]);

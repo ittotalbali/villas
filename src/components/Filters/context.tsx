@@ -514,7 +514,20 @@ export const FilterContextProvider = ({
       const next = new URLSearchParams(prev);
 
       Object.entries(draftFilters).forEach(([key, value]) => {
-        if (value === undefined || value === null || value === "") {
+        const isEmpty = value === undefined || value === null || value === "";
+
+        if (
+          (key === "area_id" ||
+            key === "location_id" ||
+            key === "sub_location_id") &&
+          !isEmpty
+        ) {
+          next.delete("lat");
+          next.delete("lng");
+          next.delete("zoom");
+        }
+
+        if (isEmpty) {
           next.delete(key);
         } else {
           next.set(key, String(value));
@@ -538,7 +551,7 @@ export const FilterContextProvider = ({
     setCheckOutDate(undefined);
     clearAllFilters();
     setCenter([-8.663804, 115.141362]);
-    setZoom(16);
+    setZoom(12);
 
     // Clear URL query params
     // navigate(location.pathname, { replace: true });

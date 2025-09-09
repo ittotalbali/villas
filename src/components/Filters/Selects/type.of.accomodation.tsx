@@ -6,6 +6,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Home, X } from "lucide-react";
 import { useFilterContext } from "../context";
 
 type Props = {
@@ -14,6 +15,8 @@ type Props = {
 
 const TypeOfAccomodationSelects = ({}: Props) => {
   const { draftFilters, updateDraftFilter } = useFilterContext();
+
+  const hasValue = Boolean(draftFilters.type_accommodation);
 
   return (
     <div className="space-y-2">
@@ -24,8 +27,27 @@ const TypeOfAccomodationSelects = ({}: Props) => {
           updateDraftFilter("type_accommodation", value || undefined)
         }
       >
-        <SelectTrigger className="border-gray-300">
-          <SelectValue placeholder="Select Type" />
+        <SelectTrigger className="border-gray-300 flex items-center gap-2">
+          <Home className="h-4 w-4 shrink-0" />
+          <div className="flex-1 text-left">
+            <SelectValue placeholder="Select Type" />
+          </div>
+
+          {/* Always reserve space for X button to keep consistent width */}
+          <div className="w-5 h-5 shrink-0 flex items-center justify-center">
+            {hasValue && (
+              <span
+                onClick={(e) => {
+                  e.stopPropagation(); // Prevent select from opening
+                  updateDraftFilter("type_accommodation", undefined);
+                }}
+                className="text-muted-foreground hover:text-black cursor-pointer p-0.5 rounded"
+                title="Clear accommodation type"
+              >
+                <X className="w-4 h-4" />
+              </span>
+            )}
+          </div>
         </SelectTrigger>
         <SelectContent className="max-h-60 overflow-y-auto z-50 bg-white">
           <SelectItem value="villa">Villa</SelectItem>

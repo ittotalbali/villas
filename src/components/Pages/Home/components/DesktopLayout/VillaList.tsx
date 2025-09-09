@@ -32,7 +32,7 @@ const VillaListSection = ({}: Props) => {
       }}
     >
       <div className="flex flex-col h-full">
-        <div className="p-6  border-gray-200 flex w-full justify-between">
+        <div className="p-6 border-b border-gray-200 flex w-full justify-between">
           {/* <h2 className="m-0 text-2xl font-semibold">Villas in Bali</h2> */}
           <span className="m-0 text-sm text-gray-600 font-medium flex gap-1 my-auto">
             <p className="font-bold">{totalVillas}</p> <p>villas available</p>

@@ -1,10 +1,13 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Check, ChevronsUpDown, Loader2, X } from "lucide-react";
 import { useInfiniteAreas } from "@/lib/api/hooks/areas";
+import { useSearchParams } from "react-router-dom";
+import { useVillaFilterStore } from "@/lib/store/filterStore";
 
 interface AreaComboBoxProps {
   value?: number;
   onValueChange?: (value: number | undefined) => void;
+  handleClear: (e: React.MouseEvent<Element, MouseEvent>) => void;
   placeholder?: string;
   emptyText?: string;
   disabled?: boolean;
@@ -16,6 +19,8 @@ interface AreaComboBoxProps {
 export default function CustomAreaComboBox({
   value: propValue,
   onValueChange,
+  handleClear,
+
   placeholder = "Select area...",
   emptyText = "No area found.",
   disabled = false,
@@ -23,6 +28,7 @@ export default function CustomAreaComboBox({
   baseParams = {},
   searchDebounce = 300,
 }: AreaComboBoxProps) {
+  // const [searchParams, setSearchParams] = useSearchParams();
   // const { filters, setFilters } = useVillaFilterStore();
   const [isOpen, setIsOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
@@ -143,12 +149,6 @@ export default function CustomAreaComboBox({
     setIsOpen(false);
     setSearchValue("");
     setHighlightedIndex(-1);
-  };
-
-  const handleClear = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    onValueChange?.(undefined);
-    // setFilters({ ...filters, area_id: undefined });
   };
 
   const toggleOpen = () => {
