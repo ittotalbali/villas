@@ -24,42 +24,53 @@ const LocationCombobox = ({ withLabel = true, className }: Props) => {
     filters.location_id ??
     undefined;
 
-  const handleClear = useCallback((e: React.MouseEvent) => {
-    e.stopPropagation();
+  const currentAreaIDValue: number | undefined =
+    (draftFilters.area_id ? draftFilters.area_id : undefined) ??
+    (searchParams.get("area_id")
+      ? parseInt(searchParams.get("area_id")!, 10)
+      : undefined) ??
+    filters.area_id ??
+    undefined;
 
-    if (draftFilters.location_id) {
-      updateDraftFilter("lat", undefined);
-      updateDraftFilter("lng", undefined);
-      updateDraftFilter("zoom", undefined);
-      updateDraftFilter("location_id", undefined);
-      updateDraftFilter("sub_location_id", undefined);
-    }
+  const handleClear = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
 
-    if (filters.location_id) {
-      setFilters({
-        ...filters,
-        lat: undefined,
-        lng: undefined,
-        zoom: undefined,
-        location_id: undefined,
-        sub_location_id: undefined,
-      });
-    }
+      if (draftFilters.location_id) {
+        updateDraftFilter("lat", undefined);
+        updateDraftFilter("lng", undefined);
+        updateDraftFilter("zoom", undefined);
+        updateDraftFilter("location_id", undefined);
+        updateDraftFilter("sub_location_id", undefined);
+      }
 
-    if (searchParams.get("location_id")) {
-      setSearchParams((prev) => {
-        const next = new URLSearchParams(prev);
+      if (filters.location_id) {
+        setFilters({
+          ...filters,
+          lat: undefined,
+          lng: undefined,
+          zoom: undefined,
+          location_id: undefined,
+          sub_location_id: undefined,
+        });
+      }
 
-        next.delete("lat");
-        next.delete("lng");
-        next.delete("zoom");
-        next.delete("location_id");
-        next.delete("sub_location_id");
+      if (searchParams.get("location_id")) {
+        setSearchParams((prev) => {
+          const next = new URLSearchParams(prev);
 
-        return next;
-      });
-    }
-  }, [draftFilters, filters, searchParams]);
+          next.delete("lat");
+          next.delete("lng");
+          next.delete("zoom");
+          next.delete("location_id");
+          next.delete("sub_location_id");
+
+          return next;
+        });
+      }
+    },
+    [draftFilters, filters, searchParams]
+  );
 
   return (
     <div className="space-y-2">
@@ -78,8 +89,9 @@ const LocationCombobox = ({ withLabel = true, className }: Props) => {
             }
           }}
           placeholder="Select location"
-          disabled={!draftFilters.area_id}
-          baseParams={{ area_id: draftFilters.area_id?.toString() }}
+          disabled={!currentAreaIDValue}
+          baseParams={{ area_id: currentAreaIDValue?.toString() }}
+          queryOptions={{ enabled: !!currentAreaIDValue }}
         />
       </div>
     </div>

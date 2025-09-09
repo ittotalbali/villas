@@ -20,7 +20,29 @@ export const useFetchVillas = (
 
   // Clean up undefined values
   const cleanedParams = Object.fromEntries(
-    Object.entries(queryParams).filter(([_, value]) => value !== undefined)
+    Object.entries(queryParams).filter(([key, value]) => {
+      if (value === undefined) return false;
+
+      if (key === "lat") {
+        if (value === "0") {
+          return false;
+        }
+      }
+
+      if (key === "lng") {
+        if (value === "0") {
+          return false;
+        }
+      }
+
+      if (key === "zoom") {
+        if (value === 0) {
+          return false;
+        }
+      }
+
+      return true;
+    })
   );
 
   return useQuery<VillaApiResponse, Error>({

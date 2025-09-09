@@ -19,6 +19,7 @@ interface LocationComboBoxProps {
   baseParams?: Omit<LocationQueryParams, "page" | "search_param">;
   searchDebounce?: number;
   showCoordinates?: boolean;
+  queryOptions?: { enabled?: boolean }; // Add queryOptions prop
 }
 
 export default function LocationComboBox({
@@ -32,6 +33,7 @@ export default function LocationComboBox({
   searchDebounce = 300,
   showCoordinates = false,
   handleClear,
+  queryOptions = {},
 }: LocationComboBoxProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
@@ -65,7 +67,7 @@ export default function LocationComboBox({
     isLoading,
     isError,
     error,
-  } = useInfiniteLocations(queryParams);
+  } = useInfiniteLocations(queryParams, queryOptions); // Pass queryOptions
 
   const allLocations = data?.pages.flatMap((page) => page.data) || [];
   const selectedLocation = allLocations.find(

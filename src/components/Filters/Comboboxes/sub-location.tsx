@@ -24,6 +24,14 @@ const SubLocationCombobox = ({ withLabel = true, className }: Props) => {
     filters.sub_location_id ??
     undefined;
 
+  const currentLocationIDValue: number | undefined =
+    (draftFilters.location_id ? draftFilters.location_id : undefined) ??
+    (searchParams.get("location_id")
+      ? parseInt(searchParams.get("location_id")!, 10)
+      : undefined) ??
+    filters.location_id ??
+    undefined;
+
   const handleClear = useCallback(
     (e: React.MouseEvent) => {
       e.stopPropagation();
@@ -62,8 +70,8 @@ const SubLocationCombobox = ({ withLabel = true, className }: Props) => {
           onValueChange={(value) => updateDraftFilter("sub_location_id", value)}
           handleClear={handleClear}
           placeholder="Select sub-location"
-          disabled={!draftFilters.location_id}
-          baseParams={{ location_id: draftFilters.location_id }}
+          disabled={!currentLocationIDValue}
+          baseParams={{ location_id: currentLocationIDValue }}
         />
       </div>
     </div>

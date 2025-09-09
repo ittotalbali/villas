@@ -32,11 +32,9 @@ export const ListContextProvider = ({
   const [searchParams] = useSearchParams();
   const { filters } = useVillaFilterStore();
 
-  const lat = parseFloat(searchParams.get("lat") ?? filters.lat ?? "-8.663804");
-  const lng = parseFloat(
-    searchParams.get("lng") ?? filters.lng ?? "115.141362"
-  );
-  const zoom = searchParams.get("zoom") ?? filters.zoom?.toString() ?? "12";
+  const lat = parseFloat(searchParams.get("lat") ?? filters.lat ?? "0");
+  const lng = parseFloat(searchParams.get("lng") ?? filters.lng ?? "0");
+  const zoom = searchParams.get("zoom") ?? filters.zoom?.toString() ?? "0";
 
   const {
     data,

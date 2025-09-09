@@ -18,6 +18,8 @@ import { format, parseISO } from "date-fns";
 import { useSearchParams as useRouterSearchParams } from "react-router-dom";
 
 interface ContextProps {
+  initialized: boolean;
+
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 
@@ -178,6 +180,25 @@ export const FilterContextProvider = ({
     if (!initialized && routerSearchParams) {
       const queryFilters: VillaQueryParams = {};
 
+      if (routerSearchParams.has("area_id")) {
+        queryFilters.area_id = parseNumberParam(
+          routerSearchParams.get("area_id")
+        );
+      }
+      if (routerSearchParams.has("location_id")) {
+        queryFilters.location_id = parseNumberParam(
+          routerSearchParams.get("location_id")
+        );
+      }
+      if (
+        routerSearchParams.has("sub_location_id") &&
+        queryFilters.location_id
+      ) {
+        queryFilters.sub_location_id = parseNumberParam(
+          routerSearchParams.get("sub_location_id")
+        );
+      }
+
       // Parse all possible params
       if (routerSearchParams.has("curs_exchanges_id"))
         queryFilters.curs_exchanges_id = parseNumberParam(
@@ -213,18 +234,7 @@ export const FilterContextProvider = ({
         );
       if (routerSearchParams.has("limit"))
         queryFilters.limit = parseNumberParam(routerSearchParams.get("limit"));
-      if (routerSearchParams.has("area_id"))
-        queryFilters.area_id = parseNumberParam(
-          routerSearchParams.get("area_id")
-        );
-      if (routerSearchParams.has("location_id"))
-        queryFilters.location_id = parseNumberParam(
-          routerSearchParams.get("location_id")
-        );
-      if (routerSearchParams.has("sub_location_id"))
-        queryFilters.sub_location_id = parseNumberParam(
-          routerSearchParams.get("sub_location_id")
-        );
+
       if (routerSearchParams.has("start_date"))
         queryFilters.start_date = parseStringParam(
           routerSearchParams.get("start_date")
@@ -332,7 +342,7 @@ export const FilterContextProvider = ({
       }
       setInitialized(true);
     }
-  }, [routerSearchParams, initialized, setFilters]);
+  }, [routerSearchParams, initialized, setFilters, filters]);
 
   // Sync dates when filters change externally (but only if from query init)
   useEffect(() => {
@@ -694,6 +704,7 @@ export const FilterContextProvider = ({
   return (
     <Context.Provider
       value={{
+        initialized,
         open,
         setOpen,
         applyFilters,

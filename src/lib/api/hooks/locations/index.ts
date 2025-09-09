@@ -45,7 +45,8 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import axios from "axios";
 
 export const useInfiniteLocations = (
-  baseParams: Omit<LocationQueryParams, "page">
+  baseParams: Omit<LocationQueryParams, "page">,
+  options: { enabled?: boolean } = {} // Add options parameter with enabled property
 ) => {
   return useInfiniteQuery<LocationApiResponse, Error, InfiniteLocationResponse>(
     {
@@ -76,7 +77,7 @@ export const useInfiniteLocations = (
       },
       retry: 2,
       staleTime: 1000 * 60 * 15, // 15 min
-      // enabled: isEnabled,
+      enabled: options.enabled ?? true, // Use the enabled option, default to true
     }
   );
 };

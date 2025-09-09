@@ -1,3 +1,4 @@
+// lib/api/hooks/villas/useInfiniteVillas.ts
 import type { AxiosResponse } from "axios";
 import type {
   InfiniteVillaResponse,
@@ -6,6 +7,7 @@ import type {
 } from ".";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import axios from "axios";
+import qs from "qs";
 import { useVillaFilterStore } from "@/lib/store/filterStore";
 
 export const useInfiniteVillas = (
@@ -23,7 +25,29 @@ export const useInfiniteVillas = (
 
   // Clean up undefined values
   const cleanedParams = Object.fromEntries(
-    Object.entries(queryParams).filter(([_, value]) => value !== undefined)
+    Object.entries(queryParams).filter(([key, value]) => {
+      if (value === undefined) return false;
+
+      if (key === "lat") {
+        if (value === "0") {
+          return false;
+        }
+      }
+
+      if (key === "lng") {
+        if (value === "0") {
+          return false;
+        }
+      }
+
+      if (key === "zoom") {
+        if (value === 0) {
+          return false;
+        }
+      }
+
+      return true;
+    })
   );
 
   return useInfiniteQuery<VillaApiResponse, Error, InfiniteVillaResponse>({
@@ -36,6 +60,12 @@ export const useInfiniteVillas = (
             ...cleanedParams,
             page: pageParam,
             is_paginate: true,
+          },
+          paramsSerializer: (params) => {
+            return qs.stringify(params, {
+              arrayFormat: "brackets",
+              encode: false,
+            });
           },
         }
       );
