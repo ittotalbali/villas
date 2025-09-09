@@ -1,6 +1,8 @@
 import { Label } from "@/components/ui/label";
 import { useFilterContext } from "../context";
 import LocationComboBox from "@/components/ComboBoxes/Location";
+import { useVillaFilterStore } from "@/lib/store/filterStore";
+import { useSearchParams } from "react-router-dom";
 
 type Props = {
   testid?: string;
@@ -10,6 +12,53 @@ type Props = {
 
 const LocationCombobox = ({ withLabel = true, className }: Props) => {
   const { draftFilters, updateDraftFilter } = useFilterContext();
+  const { filters, setFilters } = useVillaFilterStore();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const currentValue: number | undefined =
+    (draftFilters.location_id ? draftFilters.location_id : undefined) ??
+    (searchParams.get("location_id")
+      ? parseInt(searchParams.get("location_id")!, 10)
+      : undefined) ??
+    filters.location_id ??
+    undefined;
+
+  const handleClear = (e: React.MouseEvent) => {
+    e.stopPropagation();
+
+    if (draftFilters.location_id) {
+      updateDraftFilter("lat", undefined);
+      updateDraftFilter("lng", undefined);
+      updateDraftFilter("zoom", undefined);
+      updateDraftFilter("location_id", undefined);
+      updateDraftFilter("sub_location_id", undefined);
+    }
+
+    if (filters.location_id) {
+      setFilters({
+        ...filters,
+        lat: undefined,
+        lng: undefined,
+        zoom: undefined,
+        location_id: undefined,
+        sub_location_id: undefined,
+      });
+    }
+
+    if (searchParams.get("location_id")) {
+      setSearchParams((prev) => {
+        const next = new URLSearchParams(prev);
+
+        next.delete("lat");
+        next.delete("lng");
+        next.delete("zoom");
+        next.delete("location_id");
+        next.delete("sub_location_id");
+
+        return next;
+      });
+    }
+  };
 
   return (
     <div className="space-y-2">
@@ -17,7 +66,8 @@ const LocationCombobox = ({ withLabel = true, className }: Props) => {
       <div className="relative ">
         <LocationComboBox
           className={className}
-          value={draftFilters.location_id}
+          value={currentValue}
+          handleClear={handleClear}
           onValueChange={(id, coordinates) => {
             updateDraftFilter("location_id", id);
             updateDraftFilter("sub_location_id", undefined);

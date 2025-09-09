@@ -6,6 +6,7 @@ import {
 } from "@/lib/api/hooks/locations";
 
 interface LocationComboBoxProps {
+  handleClear: (e: React.MouseEvent<Element, MouseEvent>) => void;
   value?: number;
   onValueChange?: (
     value: number | undefined,
@@ -30,6 +31,7 @@ export default function LocationComboBox({
   baseParams = {},
   searchDebounce = 300,
   showCoordinates = false,
+  handleClear,
 }: LocationComboBoxProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
@@ -155,11 +157,6 @@ export default function LocationComboBox({
     setIsOpen(false);
     setSearchValue("");
     setHighlightedIndex(-1);
-  };
-
-  const handleClear = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    onValueChange?.(undefined, undefined);
   };
 
   const toggleOpen = () => {
