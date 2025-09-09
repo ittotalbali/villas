@@ -6,7 +6,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Bath } from "lucide-react";
 import { useFilterContext } from "../context";
 import { useSearchParams } from "react-router-dom";
 import { useVillaFilterStore } from "@/lib/store/filterStore";
@@ -35,8 +34,7 @@ const BathroomSelects = ({}: Props) => {
           updateDraftFilter("bathroom", value ? parseInt(value) : undefined)
         }
       >
-        <SelectTrigger className="border-gray-300">
-          <Bath className="mr-2 h-4 w-4" />
+        <SelectTrigger className="min-w-[200px] w-full min-h-[42px] border-gray-300">
           <SelectValue placeholder="Select" />
         </SelectTrigger>
         <SelectContent className="max-h-60 overflow-y-auto z-50 bg-white">

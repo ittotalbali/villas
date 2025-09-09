@@ -31,7 +31,13 @@ export default function CurrencyComboBox({
   const listRef = useRef<HTMLDivElement>(null);
 
   // Use store value if propValue is undefined
-  const value = propValue !== undefined ? propValue : filters.curs_exchanges_id;
+  const value: number | undefined =
+    propValue ??
+    (searchParams.get("curs_exchanges_id")
+      ? parseInt(searchParams.get("curs_exchanges_id")!, 10)
+      : undefined) ??
+    filters.curs_exchanges_id ??
+    7;
 
   const { data, isLoading, isError, error } = useCurrencies();
   const currencies = data?.list || [];
@@ -155,7 +161,7 @@ export default function CurrencyComboBox({
           {selectedCurrency ? selectedCurrency.code : placeholder}
         </span>
         <div className="flex items-center space-x-1 flex-none">
-          {selectedCurrency && !disabled && filters.curs_exchanges_id != 7 && (
+          {selectedCurrency && !disabled && value != 7 && (
             <button
               onClick={handleClear}
               className="p-1 hover:bg-gray-100 rounded"

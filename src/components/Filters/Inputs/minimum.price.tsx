@@ -15,7 +15,7 @@ const MinimumPriceInput = ({}: Props) => {
       </Label>
       <Input
         id="price_min"
-        className="border-gray-300"
+        className="min-w-[200px] w-full min-h-[42px] border border-gray-300"
         type="number"
         placeholder="Min price"
         value={draftFilters.price_min || ""}

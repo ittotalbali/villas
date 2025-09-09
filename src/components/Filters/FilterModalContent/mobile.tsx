@@ -11,6 +11,7 @@ import AreaCombobox from "../Comboboxes/area";
 import LocationCombobox from "../Comboboxes/location";
 import SubLocationCombobox from "../Comboboxes/sub-location";
 import DateRangePicker from "../DateRangePicker";
+import BedroomSelect from "../Selects/bedroom";
 
 type Props = {
   testid?: string;
@@ -41,7 +42,7 @@ const FilterContentMobile = ({}: Props) => {
           <BathroomSelects />
 
           {/* Bedrooms */}
-          {/* <BedroomSelect /> */}
+          <BedroomSelect withLabel />
         </div>
 
         {/* Property Type & Additional Options */}
