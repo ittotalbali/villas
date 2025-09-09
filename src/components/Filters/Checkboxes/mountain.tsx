@@ -1,3 +1,4 @@
+// Checkboxes/mountain.tsx
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { useFilterContext } from "../context";
@@ -10,12 +11,20 @@ type Props = {
 
 const MountainCheckbox = ({ checkKey, label }: Props) => {
   const { draftFilters, updateDraftVillaTypeFilter } = useFilterContext();
-  const isChecked = Boolean(
-    (draftFilters.mountain_villa as any)?.params?.[checkKey]
-  );
+
+  const mountainVilla = draftFilters.mountain_villa as any;
+  let isChecked = false;
+
+  if (mountainVilla?.params) {
+    if (Array.isArray(mountainVilla.params)) {
+      isChecked = mountainVilla.params.includes(checkKey);
+    } else {
+      isChecked = Boolean(mountainVilla.params[checkKey]);
+    }
+  }
 
   return (
-    <div key={checkKey} className="flex items-center space-x-2">
+    <div className="flex items-center space-x-2">
       <Checkbox
         id={`mountain_${checkKey}`}
         checked={isChecked}

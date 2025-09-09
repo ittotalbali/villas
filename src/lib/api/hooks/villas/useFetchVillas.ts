@@ -1,21 +1,20 @@
 // lib/api/hooks/villas/useFetchVillas.ts
 import { useQuery } from "@tanstack/react-query";
 import axios, { type AxiosResponse } from "axios";
+import qs from "qs";
 import type { VillaApiResponse, VillaQueryParams } from ".";
 import { useVillaFilterStore } from "@/lib/store/filterStore";
 
 export const useFetchVillas = (
   additionalParams: Partial<VillaQueryParams> = {},
-  isEnabled: boolean = false
+  isEnabled: boolean = true
 ) => {
-  // Get filters from Zustand store
   const { filters } = useVillaFilterStore();
 
-  // Merge Zustand filters with additional params
   const queryParams: VillaQueryParams = {
     ...filters,
     ...additionalParams,
-    // status: "post", // Always filter for published villas
+    // status: "post",
     is_paginate: true,
   };
 
@@ -25,12 +24,18 @@ export const useFetchVillas = (
   );
 
   return useQuery<VillaApiResponse, Error>({
-    queryKey: ["villas", cleanedParams], // Query key includes all filters
+    queryKey: ["villas", cleanedParams],
     queryFn: async () => {
       const response: AxiosResponse<VillaApiResponse> = await axios.get(
         `${import.meta.env.VITE_API_URL}/api/v1/villa`,
         {
           params: cleanedParams,
+          paramsSerializer: (params) => {
+            return qs.stringify(params, {
+              arrayFormat: "brackets",
+              encode: false,
+            });
+          },
         }
       );
       return response.data;

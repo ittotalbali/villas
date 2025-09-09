@@ -1,3 +1,4 @@
+// Checkboxes/facility.tsx
 import type { Facility } from "@/lib/api/hooks/facilities";
 import { useFilterContext } from "../context";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -10,14 +11,15 @@ type Props = {
 
 const FacilityCheckbox = ({ facility }: Props) => {
   const { draftFilters, toggleDraftFacility } = useFilterContext();
+
   return (
     <div key={facility.id} className="flex items-center space-x-2">
       <Checkbox
         id={`facility_${facility.id}`}
         checked={
-          draftFilters.facilities?.includes(facility.id.toString()) || false
+          draftFilters.facilities?.includes(facility.name) || false // Use name instead of ID
         }
-        onCheckedChange={() => toggleDraftFacility(facility.id)}
+        onCheckedChange={() => toggleDraftFacility(facility.name)} // Pass both ID and name
       />
       <Label
         htmlFor={`facility_${facility.id}`}

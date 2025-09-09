@@ -1,4 +1,5 @@
 import { useFacilities, type Facility } from "@/lib/api/hooks/facilities";
+import qs from "qs";
 import {
   useVillaFilterStore,
   type VillaQueryParams,
@@ -14,11 +15,7 @@ import {
 } from "react";
 import { useHomeContext } from "../Pages/Home/contexts/context";
 import { format, parseISO } from "date-fns";
-import {
-  useLocation,
-  useNavigate,
-  useSearchParams as useRouterSearchParams,
-} from "react-router-dom";
+import { useSearchParams as useRouterSearchParams } from "react-router-dom";
 
 interface ContextProps {
   open: boolean;
@@ -36,7 +33,7 @@ interface ContextProps {
   handleDraftCheckOutDateChange: (date: Date | undefined) => void;
 
   draftFilters: VillaQueryParams;
-  toggleDraftFacility: (facilityId: number) => void;
+  toggleDraftFacility: (facilityName: string) => void;
   updateDraftFilter: (key: keyof VillaQueryParams, value: any) => void;
   updateDraftVillaTypeFilter: (
     villaType: keyof VillaQueryParams,
@@ -137,21 +134,13 @@ const parseVillaTypeParams = (
   const paramValue = searchParams.get(paramName);
   if (!paramValue) return undefined;
 
-  // For wedding_villa, treat as object; others as array
-  const isWedding = paramName === "wedding_villa";
-  if (isWedding) {
-    // Assume comma-separated keys for checkboxes, e.g., "key1,key2"
-    const paramsArray = paramValue.split(",");
-    const paramsObj: Record<string, any> = {};
-    paramsArray.forEach((key) => {
-      if (key) {
-        paramsObj[key] = true;
-      }
-    });
-    return { params: paramsObj };
+  if (paramName === "wedding_villa") {
+    // Wedding villa: comma-separated keys for checkboxes
+    const paramsArray = paramValue.split(",").filter(Boolean);
+    return { params: paramsArray };
   } else {
-    // For others, array of strings
-    return { params: parseArrayParam(paramValue) };
+    // Other villa types: array of strings
+    return { params: paramValue.split(",").filter(Boolean) };
   }
 };
 
@@ -160,8 +149,6 @@ export const FilterContextProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const navigate = useNavigate();
-  const location = useLocation();
   const [routerSearchParams, setRouterSearchParams] = useRouterSearchParams();
   const { filters, setFilters, clearAllFilters } = useVillaFilterStore();
   const [open, setOpen] = useState(false);
@@ -393,17 +380,16 @@ export const FilterContextProvider = ({
     []
   );
 
-  const toggleDraftFacility = useCallback((facilityId: number) => {
+  const toggleDraftFacility = useCallback((facilityName: string) => {
     const scrollPosition = scrollContainerRef.current?.scrollTop || 0;
 
     setDraftFilters((prev) => {
       const currentFacilities = prev.facilities || [];
-      const facilityIdStr = facilityId.toString();
-      const isSelected = currentFacilities.includes(facilityIdStr);
+      const isSelected = currentFacilities.includes(facilityName); // Check by name
 
       const newFacilities = isSelected
-        ? currentFacilities.filter((id) => id !== facilityIdStr)
-        : [...currentFacilities, facilityIdStr];
+        ? currentFacilities.filter((name) => name !== facilityName) // Filter by name
+        : [...currentFacilities, facilityName]; // Add name
 
       requestAnimationFrame(() => {
         if (scrollContainerRef.current) {
@@ -463,31 +449,36 @@ export const FilterContextProvider = ({
 
       setDraftFilters((prev) => {
         const currentVillaTypeData = prev[villaType] as any;
-        const currentParams = currentVillaTypeData?.params || {};
+        const currentParams = currentVillaTypeData?.params || [];
 
-        // Create new params object
-        const newParams = { ...currentParams };
+        let newParams;
 
-        // Handle the checkbox value properly
-        if (value === true) {
-          newParams[key] = true;
+        if (villaType === "wedding_villa") {
+          // Wedding villa uses object format
+          newParams = { ...currentParams };
+          if (value === true) {
+            newParams[key] = true;
+          } else {
+            delete newParams[key];
+          }
         } else {
-          // Remove the key entirely when unchecked
-          delete newParams[key];
+          // Other villa types use array format
+          newParams = Array.isArray(currentParams) ? [...currentParams] : [];
+          if (value === true) {
+            if (!newParams.includes(key)) {
+              newParams.push(key);
+            }
+          } else {
+            newParams = newParams.filter((param: string) => param !== key);
+          }
         }
-
-        // Clean up undefined values
-        const cleanedParams = Object.fromEntries(
-          Object.entries(newParams).filter(
-            ([_, v]) => v !== undefined && v !== false
-          )
-        );
 
         const newFilters = {
           ...prev,
           [villaType]:
-            Object.keys(cleanedParams).length > 0
-              ? { params: cleanedParams }
+            (Array.isArray(newParams) && newParams.length > 0) ||
+            (typeof newParams === "object" && Object.keys(newParams).length > 0)
+              ? { params: newParams }
               : undefined,
         };
 
@@ -509,35 +500,113 @@ export const FilterContextProvider = ({
       setCenter([parseFloat(draftFilters.lat), parseFloat(draftFilters.lng)]);
       setZoom(12);
     }
-    // Update URL query params
+
+    // Update URL query params using qs for consistent serialization
     setRouterSearchParams((prev) => {
-      const next = new URLSearchParams(prev);
+      // Convert current search params to object
+      const currentParams = Object.fromEntries(prev.entries());
 
-      Object.entries(draftFilters).forEach(([key, value]) => {
-        const isEmpty = value === undefined || value === null || value === "";
+      // Merge with new filters
+      const mergedParams = {
+        ...currentParams,
+        ...draftFilters,
+      };
 
+      // Clean up undefined values
+      const cleanedParams = Object.fromEntries(
+        Object.entries(mergedParams).filter(
+          ([_, value]) => value !== undefined && value !== null && value !== ""
+        )
+      );
+
+      // Clear location filters when area/location filters are set
+      if (
+        cleanedParams.area_id ||
+        cleanedParams.location_id ||
+        cleanedParams.sub_location_id
+      ) {
+        delete cleanedParams.lat;
+        delete cleanedParams.lng;
+        delete cleanedParams.zoom;
+      }
+
+      // Convert facilities IDs to names for backend
+      if (cleanedParams.facilities && Array.isArray(cleanedParams.facilities)) {
+        const facilityNames = cleanedParams.facilities
+          .map((id) => {
+            const facility = facilities.find((f) => f.id.toString() === id);
+            return facility ? facility.name : id;
+          })
+          .filter(Boolean);
+
+        cleanedParams.facilities = facilityNames;
+      }
+
+      // Convert villa type params to the format backend expects
+      const villaTypes = [
+        "retreats_villa",
+        "mountain_villa",
+        "wedding_villa",
+        "beach_villa",
+        "family_villa",
+      ] as const;
+
+      villaTypes.forEach((type) => {
+        const villaData = cleanedParams[type];
+
+        // Add type checking before accessing params
         if (
-          (key === "area_id" ||
-            key === "location_id" ||
-            key === "sub_location_id") &&
-          !isEmpty
+          villaData &&
+          typeof villaData === "object" &&
+          "params" in villaData
         ) {
-          next.delete("lat");
-          next.delete("lng");
-          next.delete("zoom");
-        }
+          const villaParams = villaData.params;
 
-        if (isEmpty) {
-          next.delete(key);
+          if (
+            type === "wedding_villa" &&
+            typeof villaParams === "object" &&
+            !Array.isArray(villaParams)
+          ) {
+            // Convert wedding villa object to array of keys with true values
+            cleanedParams[type] = {
+              params: Object.keys(villaParams).filter(
+                (k) => villaParams[k] === true
+              ),
+            };
+          }
+          // For other villa types, ensure params is an array
+          else if (!Array.isArray(villaParams)) {
+            cleanedParams[type] = { params: [] };
+          }
+          // If it's already an array, keep it as is
+          else {
+            cleanedParams[type] = { params: villaParams };
+          }
         } else {
-          next.set(key, String(value));
+          // If it's not in the expected format, remove it
+          delete cleanedParams[type];
         }
       });
 
-      return next;
+      // Use qs to stringify with consistent format
+      const queryString = qs.stringify(cleanedParams, {
+        arrayFormat: "brackets",
+        encode: false,
+      });
+
+      return new URLSearchParams(queryString);
     });
+
     setOpen(false);
-  }, [draftFilters, setFilters, setCenter, navigate, location.pathname]);
+  }, [
+    draftFilters,
+    setFilters,
+    setCenter,
+    setZoom,
+    facilities,
+    setRouterSearchParams,
+    setOpen,
+  ]);
 
   const handleCancel = useCallback(() => {
     setOpen(false);
