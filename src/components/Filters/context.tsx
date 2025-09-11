@@ -175,174 +175,180 @@ export const FilterContextProvider = ({
 
   const facilities = facilitiesData?.data || [];
 
+
   // Initialize filters from query params if present (only once on mount)
-  useEffect(() => {
-    if (!initialized && routerSearchParams) {
-      const queryFilters: VillaQueryParams = {};
+useEffect(() => {
+  if (!initialized && routerSearchParams) {
+    const queryFilters: VillaQueryParams = {};
 
-      if (routerSearchParams.has("area_id")) {
-        queryFilters.area_id = parseNumberParam(
-          routerSearchParams.get("area_id")
-        );
+    // Define all parameters with their parse and serialization functions
+    const paramConfigs: {
+      key: keyof VillaQueryParams;
+      parse: (value: string | null) => any;
+      toString?: (value: any) => string; // For converting filters to routerSearchParams
+    }[] = [
+      { key: "curs_exchanges_id", parse: parseNumberParam, toString: (v) => v.toString() },
+      { key: "lat", parse: parseStringParam, toString: (v) => v },
+      { key: "lng", parse: parseStringParam, toString: (v) => v },
+      { key: "zoom", parse: parseNumberParam, toString: (v) => v.toString() },
+      { key: "page", parse: parseNumberParam, toString: (v) => v.toString() },
+      { key: "length", parse: parseNumberParam, toString: (v) => v.toString() },
+      { key: "sort_by", parse: parseStringParam, toString: (v) => v },
+      { key: "sort_type", parse: parseSortTypeParam, toString: (v) => v },
+      { key: "search_param", parse: parseStringParam, toString: (v) => v },
+      { key: "status", parse: parseStatusParam, toString: (v) => v },
+      { key: "limit", parse: parseNumberParam, toString: (v) => v.toString() },
+      { key: "area_id", parse: parseNumberParam, toString: (v) => v.toString() },
+      { key: "location_id", parse: parseNumberParam, toString: (v) => v.toString() },
+      { key: "sub_location_id", parse: parseNumberParam, toString: (v) => v.toString() },
+      { key: "start_date", parse: parseStringParam, toString: (v) => v },
+      { key: "end_date", parse: parseStringParam, toString: (v) => v },
+      { key: "bathroom", parse: parseNumberParam, toString: (v) => v.toString() },
+      { key: "user_id", parse: parseNumberParam, toString: (v) => v.toString() },
+      { key: "villa_bvp", parse: parseStringParam, toString: (v) => v },
+      { key: "slug", parse: parseStringParam, toString: (v) => v },
+      { key: "whatsapp", parse: parseStringParam, toString: (v) => v },
+      { key: "email", parse: parseStringParam, toString: (v) => v },
+      { key: "type_accommodation", parse: parseAccommodationParam, toString: (v) => v },
+      { key: "freehold", parse: parseYesNoParam, toString: (v) => v },
+      { key: "leasehold", parse: parseYesNoParam, toString: (v) => v },
+      { key: "monthly_rental", parse: parseYesNoParam, toString: (v) => v },
+      { key: "yearly_rental", parse: parseYesNoParam, toString: (v) => v },
+      { key: "close_clubs", parse: parseBooleanParam, toString: (v) => v.toString() },
+      {
+        key: "facilities",
+        parse: parseArrayParam,
+        toString: (v: string[]) => v.join(","),
+      },
+      { key: "price_min", parse: parseNumberParam, toString: (v) => v.toString() },
+      { key: "price_max", parse: parseNumberParam, toString: (v) => v.toString() },
+      { key: "bedroom", parse: parseNumberParam, toString: (v) => v.toString() },
+      { key: "code", parse: parseStringParam, toString: (v) => v },
+      { key: "is_paginate", parse: parseBooleanParam, toString: (v) => v.toString() },
+    ];
+
+    // Process standard parameters
+    paramConfigs.forEach(({ key, parse, toString }) => {
+      if (routerSearchParams.has(key)) {
+        queryFilters[key] = parse(routerSearchParams.get(key));
+      } else if (filters[key] !== undefined && toString) {
+        // Convert facility IDs to names for routerSearchParams
+        if (key === "facilities" && Array.isArray(filters[key])) {
+          const facilityNames = (filters[key] as string[])
+            .map((id) => {
+              const facility = facilities.find((f) => f.id.toString() === id);
+              return facility ? facility.name : id;
+            })
+            .filter(Boolean);
+          routerSearchParams.set(key, facilityNames.join(","));
+        } else {
+          routerSearchParams.set(key, toString(filters[key]));
+        }
       }
-      if (routerSearchParams.has("location_id")) {
-        queryFilters.location_id = parseNumberParam(
-          routerSearchParams.get("location_id")
-        );
+    });
+
+    // Handle villa type specific filters
+    const villaTypes = [
+      "retreats_villa",
+      "mountain_villa",
+      "beach_villa",
+      "family_villa",
+      "wedding_villa",
+    ] as const;
+
+    villaTypes.forEach((type) => {
+      if (routerSearchParams.has(type)) {
+        queryFilters[type] = parseVillaTypeParams(type, routerSearchParams);
+      } else if (filters[type] !== undefined) {
+        const villaData = filters[type];
+        if (villaData && typeof villaData === "object" && "params" in villaData) {
+          const params = villaData.params;
+          if (Array.isArray(params)) {
+            routerSearchParams.set(type, params.join(","));
+          } else if (typeof params === "object") {
+            // For wedding_villa, use keys with true values
+            const activeParams = Object.keys(params).filter((k) => params[k] === true);
+            routerSearchParams.set(type, activeParams.join(","));
+          }
+        }
       }
-      if (
-        routerSearchParams.has("sub_location_id") &&
-        queryFilters.location_id
-      ) {
-        queryFilters.sub_location_id = parseNumberParam(
-          routerSearchParams.get("sub_location_id")
-        );
+    });
+
+    // Special case for sub_location_id dependency on location_id
+    if (queryFilters.location_id) {
+      if (routerSearchParams.has("sub_location_id")) {
+        queryFilters.sub_location_id = parseNumberParam(routerSearchParams.get("sub_location_id"));
+      } else if (filters.sub_location_id !== undefined) {
+        routerSearchParams.set("sub_location_id", filters.sub_location_id.toString());
+      }
+    }
+
+    // Set to store if any filter is present
+    const hasFilters = Object.keys(queryFilters).some(
+      (key) => queryFilters[key as keyof VillaQueryParams] !== undefined
+    );
+    if (hasFilters) {
+      setFilters(queryFilters);
+      // Update dates for display
+      if (queryFilters.start_date) {
+        setCheckInDate(parseISO(queryFilters.start_date));
+      }
+      if (queryFilters.end_date) {
+        setCheckOutDate(parseISO(queryFilters.end_date));
+      }
+    }
+    setInitialized(true);
+
+    // Sync routerSearchParams to URL using qs for consistency
+    if (hasFilters) {
+      const cleanedParams = Object.fromEntries(
+        Object.entries(queryFilters).filter(
+          ([_, value]) => value !== undefined && value !== null && value !== ""
+        )
+      );
+
+      // Convert facilities IDs to names for URL
+      if (cleanedParams.facilities && Array.isArray(cleanedParams.facilities)) {
+        const facilityNames = cleanedParams.facilities
+          .map((id) => {
+            const facility = facilities.find((f) => f.id.toString() === id);
+            return facility ? facility.name : id;
+          })
+          .filter(Boolean);
+        cleanedParams.facilities = facilityNames;
       }
 
-      // Parse all possible params
-      if (routerSearchParams.has("curs_exchanges_id"))
-        queryFilters.curs_exchanges_id = parseNumberParam(
-          routerSearchParams.get("curs_exchanges_id")
-        );
-      if (routerSearchParams.has("lat"))
-        queryFilters.lat = parseStringParam(routerSearchParams.get("lat"));
-      if (routerSearchParams.has("lng"))
-        queryFilters.lng = parseStringParam(routerSearchParams.get("lng"));
-      if (routerSearchParams.has("zoom"))
-        queryFilters.zoom = parseNumberParam(routerSearchParams.get("zoom"));
-      if (routerSearchParams.has("page"))
-        queryFilters.page = parseNumberParam(routerSearchParams.get("page"));
-      if (routerSearchParams.has("length"))
-        queryFilters.length = parseNumberParam(
-          routerSearchParams.get("length")
-        );
-      if (routerSearchParams.has("sort_by"))
-        queryFilters.sort_by = parseStringParam(
-          routerSearchParams.get("sort_by")
-        );
-      if (routerSearchParams.has("sort_type"))
-        queryFilters.sort_type = parseSortTypeParam(
-          routerSearchParams.get("sort_type")
-        );
-      if (routerSearchParams.has("search_param"))
-        queryFilters.search_param = parseStringParam(
-          routerSearchParams.get("search_param")
-        );
-      if (routerSearchParams.has("status"))
-        queryFilters.status = parseStatusParam(
-          routerSearchParams.get("status")
-        );
-      if (routerSearchParams.has("limit"))
-        queryFilters.limit = parseNumberParam(routerSearchParams.get("limit"));
-
-      if (routerSearchParams.has("start_date"))
-        queryFilters.start_date = parseStringParam(
-          routerSearchParams.get("start_date")
-        );
-      if (routerSearchParams.has("end_date"))
-        queryFilters.end_date = parseStringParam(
-          routerSearchParams.get("end_date")
-        );
-      if (routerSearchParams.has("bathroom"))
-        queryFilters.bathroom = parseNumberParam(
-          routerSearchParams.get("bathroom")
-        );
-      if (routerSearchParams.has("user_id"))
-        queryFilters.user_id = parseNumberParam(
-          routerSearchParams.get("user_id")
-        );
-      if (routerSearchParams.has("villa_bvp"))
-        queryFilters.villa_bvp = parseStringParam(
-          routerSearchParams.get("villa_bvp")
-        );
-      if (routerSearchParams.has("slug"))
-        queryFilters.slug = parseStringParam(routerSearchParams.get("slug"));
-      if (routerSearchParams.has("whatsapp"))
-        queryFilters.whatsapp = parseStringParam(
-          routerSearchParams.get("whatsapp")
-        );
-      if (routerSearchParams.has("email"))
-        queryFilters.email = parseStringParam(routerSearchParams.get("email"));
-      if (routerSearchParams.has("type_accommodation"))
-        queryFilters.type_accommodation = parseAccommodationParam(
-          routerSearchParams.get("type_accommodation")
-        );
-      if (routerSearchParams.has("freehold"))
-        queryFilters.freehold = parseYesNoParam(
-          routerSearchParams.get("freehold")
-        );
-      if (routerSearchParams.has("leasehold"))
-        queryFilters.leasehold = parseYesNoParam(
-          routerSearchParams.get("leasehold")
-        );
-      if (routerSearchParams.has("monthly_rental"))
-        queryFilters.monthly_rental = parseYesNoParam(
-          routerSearchParams.get("monthly_rental")
-        );
-      if (routerSearchParams.has("yearly_rental"))
-        queryFilters.yearly_rental = parseYesNoParam(
-          routerSearchParams.get("yearly_rental")
-        );
-      if (routerSearchParams.has("close_clubs"))
-        queryFilters.close_clubs = parseBooleanParam(
-          routerSearchParams.get("close_clubs")
-        );
-      if (routerSearchParams.has("facilities")) {
-        queryFilters.facilities = parseArrayParam(
-          routerSearchParams.get("facilities")
-        );
-      }
-      if (routerSearchParams.has("price_min"))
-        queryFilters.price_min = parseNumberParam(
-          routerSearchParams.get("price_min")
-        );
-      if (routerSearchParams.has("price_max"))
-        queryFilters.price_max = parseNumberParam(
-          routerSearchParams.get("price_max")
-        );
-      if (routerSearchParams.has("bedroom"))
-        queryFilters.bedroom = parseNumberParam(
-          routerSearchParams.get("bedroom")
-        );
-      if (routerSearchParams.has("code"))
-        queryFilters.code = parseStringParam(routerSearchParams.get("code"));
-      if (routerSearchParams.has("is_paginate"))
-        queryFilters.is_paginate = parseBooleanParam(
-          routerSearchParams.get("is_paginate")
-        );
-
-      // Villa type specific filters
-      const villaTypes = [
-        "retreats_villa",
-        "mountain_villa",
-        "beach_villa",
-        "family_villa",
-        "wedding_villa",
-      ] as const;
-
+      // Convert villa type params
       villaTypes.forEach((type) => {
-        if (routerSearchParams.has(type)) {
-          queryFilters[type] = parseVillaTypeParams(type, routerSearchParams);
+        const villaData = cleanedParams[type];
+        if (villaData && typeof villaData === "object" && "params" in villaData) {
+          const params = villaData.params;
+          if (Array.isArray(params)) {
+            cleanedParams[type] = { params };
+          } else if (typeof params === "object") {
+            cleanedParams[type] = {
+              params: Object.keys(params).filter((k) => params[k] === true),
+            };
+          }
         }
       });
 
-      // Set to store if any filter is present (i.e., query params were really set)
-      const hasFilters = Object.keys(queryFilters).some(
-        (key) => queryFilters[key as keyof VillaQueryParams] !== undefined
-      );
-      if (hasFilters) {
-        setFilters(queryFilters);
-        // Update dates for display
-        if (queryFilters.start_date) {
-          setCheckInDate(parseISO(queryFilters.start_date));
-        }
-        if (queryFilters.end_date) {
-          setCheckOutDate(parseISO(queryFilters.end_date));
-        }
+      // Clear lat/lng/zoom if location filters are set
+      if (cleanedParams.area_id || cleanedParams.location_id || cleanedParams.sub_location_id) {
+        delete cleanedParams.lat;
+        delete cleanedParams.lng;
+        delete cleanedParams.zoom;
       }
-      setInitialized(true);
+
+      const queryString = qs.stringify(cleanedParams, {
+        arrayFormat: "brackets",
+        encode: false,
+      });
+      setRouterSearchParams(new URLSearchParams(queryString));
     }
-  }, [routerSearchParams, initialized, setFilters, filters]);
+  }
+}, [routerSearchParams, initialized, setFilters, filters, facilities, setRouterSearchParams]);
+
 
   // Sync dates when filters change externally (but only if from query init)
   useEffect(() => {
