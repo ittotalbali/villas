@@ -6,7 +6,7 @@ import { fileURLToPath, URL } from "node:url";
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
-  base: "/villa/", // React app will be served from /villa
+  base: "/villanew/", // React app will be served from /villa
   resolve: {
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),

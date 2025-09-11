@@ -10,14 +10,14 @@ RUN npm run build
 FROM httpd:2.4-alpine
 
 # Copy React build to htdocs/villa (not root!)
-COPY --from=builder /app/dist /usr/local/apache2/htdocs/villa
+COPY --from=builder /app/dist /usr/local/apache2/htdocs/villanew
 
 # Copy PHP files to htdocs/villa/property (subfolder of React app)
-COPY property/ /usr/local/apache2/htdocs/villa/property/
+COPY property/ /usr/local/apache2/htdocs/villanew/property/
 
 # Copy updated .htaccess files
 COPY .htaccess /usr/local/apache2/htdocs/.htaccess
-COPY property/.htaccess /usr/local/apache2/htdocs/villa/property/.htaccess
+COPY property/.htaccess /usr/local/apache2/htdocs/villanew/property/.htaccess
 
 # Append custom config to httpd.conf
 COPY apache.conf /tmp/apache.conf

@@ -47,8 +47,8 @@ export const HomeContextProvider = ({
   const [viewMode, setViewMode] = useState<ViewMode>("list");
   const { filters } = useVillaFilterStore();
   const [center, setCenter] = useState<[number, number]>([
-    parseFloat(searchParams.get("lat") ?? filters.lat ?? "0"),
-    parseFloat(searchParams.get("lng") ?? filters.lng ?? "0"),
+    parseFloat(searchParams.get("lat") ?? filters.lat ?? (searchParams.get("location_id") &&"0") ?? "-8.663804"),
+    parseFloat(searchParams.get("lng") ?? filters.lng ?? (searchParams.get("location_id") &&"0") ?? "115.141362"),
   ]);
   const [centerLocation, setCenterLocation] = useState<[number, number]>([
     parseFloat("-8.663804"),
@@ -56,7 +56,7 @@ export const HomeContextProvider = ({
   ]);
   const [showCard, setShowCard] = useState(false);
   const [zoom, setZoom] = useState<number>(
-    parseInt(searchParams.get("zoom") ?? "0")
+    parseInt(searchParams.get("zoom") ?? filters.zoom?.toString() ?? "0")
   );
   const [selectedVilla, setSelectedVilla] = useState<number | null>(null);
   const [hoveredVilla, setHoveredVilla] = useState<number | null>(null);

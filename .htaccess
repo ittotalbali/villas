@@ -3,7 +3,7 @@
   RewriteEngine On
   
   # 1. Bypass PHP project at /villa/property
-  RewriteCond %{REQUEST_URI} ^/villa/property/
+  RewriteCond %{REQUEST_URI} ^/villanew/property/
   RewriteRule ^ - [L]
   
   # 2. Bypass existing files and directories (static assets etc.)
@@ -12,13 +12,13 @@
   RewriteRule ^ - [L]
   
   # 3. Rewrite all villa requests to index.html - MORE EXPLICIT PATTERN
-  RewriteCond %{REQUEST_URI} ^/villa(/.*)?$
-  RewriteCond %{REQUEST_URI} !^/villa/index\.html$
+  RewriteCond %{REQUEST_URI} ^/villanew(/.*)?$
+  RewriteCond %{REQUEST_URI} !^/villanew/index\.html$
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
-  RewriteRule ^(.*)$ /villa/index.html [QSA,L]
+  RewriteRule ^(.*)$ /villanew/index.html [QSA,L]
   
-  # 4. Redirect only the root `/` to `/villa/`
+  # 4. Redirect only the root `/` to `/villanew/`
   RewriteCond %{REQUEST_URI} ^/$
-  RewriteRule ^$ /villa/ [R=301,L]
+  RewriteRule ^$ /villanew/ [R=301,L]
 </IfModule>
